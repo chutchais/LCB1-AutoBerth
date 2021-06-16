@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		<h3>Bay Information : {{ bayfile.voy }} <small><a href="{% url 'bayplan:voy-detail' bayfile.voy.slug %}">back</a></small></h3>
+
+		<form class='form' method='GET' action='.'>
+			<input type='text' id='search' placeholder="Search container.." name="q" value='{{ request.GET.q}}'>
+			<button class='btn btn-default' type='submit'>Search</button>
+			<a href="{% url 'container:bay' bayfile.slug %}">Clear result</a>
+		</form>
+
+		<hr/>
+
+		<hr/>
+
+		{% if container_list %}
+		<!-- Search Result table -->
+		<div class="row">
+			<div class="col-xs-6 col-sm-6">
+				<h3>Search result of {{ request.GET.q}}</h3>
+				<table class="table table-bordered">
+					<tr>
+				        <th>Container</th>
+				        <th>Current Slot</th>
+				        <th>Original Slot</th>
+				        <th></th>
+				      </tr>
+				      {% for obj in container_list %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}?q={{obj.container}}">{{obj.container}}</a></td>
+						<td>{{obj.stowage}}</td>
+						<td>{{obj.original_stowage}}
+							{% if obj.stowage != obj.original_stowage %}
+							<small>
+								<a href="{% url 'container:container-restore' obj.slug  %}?q={{ request.GET.q }}&mode=search">restore</a>
+							</small>
+							{% endif %}
+						</td>
+						<td><a href="{{ obj.get_absolute_url }}?mode=search&q={{ request.GET.q }}">Change slot</a></td>
+					 </tr>
+					 {% endfor %}
+				</table>
+			</div>
+		</div>
+		{% endif %}
+
+		{% if bays %}
+		{% sum bays 'number' as total_container %}
+		{% sum bays 'move' as total_move %}
+		{% percent total_move.move__sum total_container.number__sum as percent_move %}
+
+		<h3>KPI : {{total_move.move__sum}}/{{total_container.number__sum}} -- {{percent_move|floatformat:1}}%</h3>
+		<a href="{% url 'container:file-ready' bayfile.slug %}?action=set">Set ready to load</a> | 
+		<a href="{% url 'container:file-ready' bayfile.slug %}?action=clear">Clear ready to load</a>
+
+		<div class="row">
+			<div class="col-xs-3 col-sm-3">
+				<h3>Bay 0X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'0' 'number' as total_container %}
+					  {% sum bays|in_bay:'0' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+
+				      {% for obj in bays|in_bay:'0' %}
+				      {% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+			</div>
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 1X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'1' 'number' as total_container %}
+					  {% sum bays|in_bay:'1' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'1' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+			</div>
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 2X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'2' 'number' as total_container %}
+					  {% sum bays|in_bay:'2' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'2' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 3X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'3' 'number' as total_container %}
+					  {% sum bays|in_bay:'3' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'3' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					<!--  <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+		</div> 
+
+		<div class="row">
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 4X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				     <!--  {% sum bays|in_bay:'4' 'number' as total_container %}
+					  {% sum bays|in_bay:'4' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'4' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 5X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				     <!--  {% sum bays|in_bay:'5' 'number' as total_container %}
+					  {% sum bays|in_bay:'5' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'5' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+			</div>
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 6X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				     <!--  {% sum bays|in_bay:'6' 'number' as total_container %}
+					  {% sum bays|in_bay:'6' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'6' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 7X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'7' 'number' as total_container %}
+					  {% sum bays|in_bay:'7' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'7' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 8X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'8' 'number' as total_container %}
+					  {% sum bays|in_bay:'8' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'8' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+		
+		<div class="col-xs-3 col-sm-3">
+				<h3>Bay 9X</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Bay</th>
+				        <th>Container</th>
+				        <th>Move</th>
+				        <th>Ready?</th>
+				      </tr>
+				      <!-- {% sum bays|in_bay:'9' 'number' as total_container %}
+					  {% sum bays|in_bay:'9' 'move' as total_move %}
+					  {% percent total_move.move__sum total_container.number__sum as percent_move %} -->
+				      {% for obj in bays|in_bay:'9' %}
+					{% is_readytoload obj.ready as ready %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.bay}}</a></td>
+						<td>{{obj.number}}</td>
+						{% if obj.move %}
+							<td>{{obj.move}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><span {{ready|safe}}></span></td>
+					 </tr>
+					 {% endfor %}
+					 <!-- <tr class="success">
+				            <td><h4><b>Total</b></h4></td>
+				            <td><h4><b>{{total_container.number__sum }}</b></h4></td>
+				            <td><h4><b>{{ total_move.move__sum }} ({{percent_move|floatformat:1}}%)</b></h4></td>
+			          </tr> -->
+				</table>
+		</div>
+	</div>
+	
+<hr/>
+
+	<div class="row">
+		<div class="col-xs-3 col-sm-3">
+				<h3>Duplicated Slot</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Slot</th>
+				        <th>#Container</th>
+				     
+				      </tr>
+				      {% for obj in dups %}
+					<tr>
+						<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}">{{obj.stowage}}</a></td>
+						<td>{{obj.number}}</td>
+						
+					 </tr>
+					 {% endfor %}
+				</table>
+		</div>
+	</div>
+	{% endif %}
+
+
+
+</div>
+{% endblock form_content %}
+
+
+{% block java_content %}
+<!-- <script>
+$(document).ready(function(){
+    $("a").click(function(){
+        alert("The paragraph was clicked.");
+    });
+});
+</script> -->
+<script>
+
+	$(function() {
+	  $('#search').focus().select();
+	});
+
+	$("input[type='text']").on("click", function () {
+        $(this).select();
+	});
+
+</script>
+
+{% endblock java_content %}

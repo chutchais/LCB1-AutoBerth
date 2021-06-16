@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Change Slot
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+	<h1>{{object.container}} on slot {{object.stowage}}</h1>
+	<hr/>
+	{% if object.original_stowage != object.stowage %}
+	<h3>Original Slot : {{ object.original_stowage }} 
+		<small><i>-- last modify : {{ object.modified_date }}</i>
+		| <a href="{% url 'container:container-restore' object.slug  %}?q={{ object.container }}&view={{ request.GET.view }}&pos={{ request.GET.pos }}">Move back to original slot</a>
+		</small>
+	</h3>
+	{% endif %}
+
+	<h2>
+		{% if request.GET.mode == 'search' %} 
+			<a href="{% url 'container:bay' object.bayplanfile.slug %}?q={{ request.GET.q }}&view={{ request.GET.view}}&pos={{pos}}">Cancel</a>
+		{% else %}
+			<a href="{% url 'container:detail' object.bayplanfile.slug object.bay %}?view={{ request.GET.view}}&pos={{pos}}">Cancel</a>
+		{% endif%}
+	</h2>
+
+	{% if request.GET.view == 'mobile' %}
+	
+		<table class="table table-bordered">
+
+					<tr class="active">
+						<th></th>
+						{% for t in tier %}
+							 <th class="text-center">{{t}}</th>
+						{% endfor %} 
+				    </tr>
+				     
+					     {% for row in deck %}
+						<tr>
+							<td class="text-center">{{row}}</td>
+
+							{% for t in tier %}
+								{% combine_stowage bay t row as new_stowage %}
+								{% get_weight current_plan new_stowage as current_weight %}
+								{% weight current_weight as curr_weight %}
+
+									{% if new_stowage in master_plan %}
+										{% if new_stowage == object.stowage %}
+											<td class="text-center danger">
+												<h3><a href="{% url 'container:container-move' object.slug new_stowage %}?q={{ object.container }}&view={{ request.GET.view }}&pos={{request.GET.pos}}">Current</a><br>
+												{{curr_weight}}</h3>
+											</td>
+										{% elif new_stowage == object.original_stowage %}
+											<td class="text-center success">
+												<h3><a href="{% url 'container:container-restore' object.slug %}?q={{ object.container }}&view={{ request.GET.view }}&pos={{request.GET.pos}}">Original</a><br>
+												{{curr_weight}}</h3>
+											</td>
+										{% else %}
+											<td class="text-center">
+											<h3><a href="{% url 'container:container-move' object.slug new_stowage %}?q={{ object.container }}&view={{ request.GET.view }}&pos={{request.GET.pos}}">{{t}}{{row}}</a><br>
+												{{curr_weight}}</h3>
+											</td>				
+										{% endif %}
+									{% else %}
+										<td></td>
+									{% endif %}
+
+							{% endfor %}
+
+						 </tr>
+						{% endfor %}
+
+
+				</table>
+
+			{% endif %}
+
+	<h4>Dis-charge Port : {{ object.dis_port }}</h4>
+	<hr/>
+	<h3>Change to new Slot </h3>
+
+	{% include 'snippets/form_snippet.html' with form=form %}
+	
+	{% if form.errors.non_field_errors %}
+	<div class="alert alert-danger" role="alert">
+		{{ form.errors.non_field_errors }}
+	</div>
+	{% endif %}
+
+	<h2>
+	{% if request.GET.mode == 'search' %} 
+		<a href="{% url 'container:bay' object.bayplanfile.slug %}?q={{ request.GET.q }}&view={{ request.GET.view}}&pos={{pos}}">Cancel</a>
+	{% else %}
+		<a href="{% url 'container:detail' object.bayplanfile.slug object.bay %}?view={{ request.GET.view}}&pos={{pos}}">Cancel</a>
+	{% endif%}
+	</h2>
+	<!-- BayReport,bay -->
+	</div>
+
+	
+</div>
+
+
+{% endblock form_content %}
+
+
+
+{% block java_content %}
+<script>
+	$(document).ready(function(){
+	    // $("a").click(function(){
+	    //     alert("The paragraph was clicked.");
+	    // });
+	    $('#id_stowage').attr('type', 'tel');
+	});
+</script>
+<script>
+
+	$(function() {
+	  $('#id_stowage').focus().select();
+	});
+
+	// $("input[type='text']").on("click", function () {
+ //        $(this).select();
+	// });
+// function getRow(slot) {
+// 	// console.log(slot.toString().length)
+// 	var slot_str = slot.toString()
+// 	var slot_len = slot_str.length
+// 	if (slot_len == 5){
+// 		x=slot_str.substring(1, 3)
+// 	}
+// 	else{
+// 		x=slot_str.substring(2, 4)
+// 	}
+//    return x 
+// }
+
+
+// function getTier(slot) {
+//     var slot_str = slot.toString()
+// 	var slot_len = slot_str.length
+// 	if (slot_len == 5){
+// 		x=slot_str.substring(3, 5)
+// 	}
+// 	else{
+// 		x=slot_str.substring(4, 6)
+// 	}
+//    return x 
+// }
+
+
+// var app6 = new Vue({
+//  delimiters: ['[[', ']]'],
+//   el: '#app',
+//   data: {
+//     slot: {{ object.stowage }},
+//     bay : {{object.bay}},
+//     tier : getTier({{ object.stowage }}),
+//     row : getRow({{ object.stowage }}),
+//     quote: ''
+//   },
+//    methods: {
+//       getQuote() {
+//         this.$http.get('http://127.0.0.1:8000/api/vessel/apollon-d/', (data) => {
+//           	consloe.log('get')
+//             this.quote = data;
+//           }, {
+//             // Attach the JWT header
+//             headers: auth.getAuthHeader()
+//           })
+//           .error((err) => console.log(err))
+//       }
+//     }
+// })
+
+
+
+
+
+</script>
+
+{% endblock java_content %}

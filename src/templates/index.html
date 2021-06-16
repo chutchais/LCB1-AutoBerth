@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+  <div class="row">
+      <a href="{% url 'berth:cutoff-home' %}">CutOff Report</a><br>
+      <a href="{% url 'bayplan:index' %}">Bayplan</a>
+  </div>
+</div>
+{% endblock form_content %}

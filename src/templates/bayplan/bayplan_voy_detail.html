@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+{% block stylesheet %}
+	
+{% endblock stylesheet %}
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		<h3>Vesel Information : {{ object.vessel }} <small><a href="{% url 'bayplan:index' %}">Home</a></small></h3>
+		 Voy      :{{ object.voy }} <br>
+		 Service  :{{ object.service }}<br>
+		 Terminal :{{ object.terminal }}<br>
+		 Performa - In : {{ object.performa_in }}<br>
+		 Performa - Out : {{ object.performa_out }}<br>
+		 ETA : {{ object.eta }}<br>
+		 ETB : {{ object.etb }}<br>
+		 ETD : {{ object.etd }}<br>
+		 DIS : {{ object.dis_no }}<br>
+		 LOAD : {{ object.load_no }}<br>
+		 <hr/>
+		
+		  
+<!-- 					<small><a href="{{ object.cutoff_set.first.get_absolute_url }}">edit</a></small>
+					<small><a href="{{ object.cutoff_set.first.get_absolute_url}}delete/">delete</a></small> -->
+				
+
+		<hr/>
+
+
+		
+
+		{% if object.bayplanfile %}
+				<h3>Bay Plan file details</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>File name</th>
+						<th>#Container</th>
+				        <th>Remark</th>
+				        <th>datetime</th>
+				        <th>Ready to Upload</th>
+				        <th></th>
+				        <th></th>
+				        <th></th>
+				        <th></th>
+				      </tr>
+
+					<tr>
+					
+						<td><a href="{% url 'container:bay' object.bayplanfile.slug %}">{{ object.bayplanfile.filename|filename }}</a></td>
+						<td>{{ object.bayplanfile.container_set.count }}</td>
+					 	<td>{{ object.bayplanfile.remark }}</td>
+					 	<td>{{ object.bayplanfile.created_date }}</td>
+					 	<td>
+					 	{% if object.bayplanfile.ready_to_load %}
+					 		<span class="glyphicon glyphicon-ok text-success icon-4x"></span>
+					 	{% else %}
+					 		<span class="glyphicon glyphicon-remove text-danger icon-4x"></span>
+					 	{% endif%}
+					 	</td>
+					 	<td><a href="{% url 'bayplan:edit' object.bayplanfile.slug %}">Edit</a></td>
+					 	<td><a href="{% url 'bayplan:delete' object.bayplanfile.slug %}">Delete</a></td>
+					 	<td><a href="{{ object.bayplanfile.filename.url}}"> Download file</a></td>
+					 	<td>
+					 		{% if object.bayplanfile.container_set.count == 0 %}
+					 		<a href="{% url 'container:process' object.bayplanfile.slug %}">Start Process</a>
+					 		{% endif %}
+					 	</td>
+					 </tr>
+
+
+				</table>
+				<hr>
+				{% if object.bayplanfile.updated_filename %}
+				<h3>Updated Bay plan</h3>
+					File name : {{ object.bayplanfile.updated_filename|filename }}
+
+					
+					<div class="row">
+						<div class="col-xs-3 col-sm-3">
+							<h3>Details</h3> <a href="{% url 'container:update' object.bayplanfile.slug %}">
+								<button type="button" class="btn btn-primary">Update Not-Ready Bay</button></a>
+							<table class="table table-bordered">
+								<tr>
+									<th>Bay</th>
+							        <th>#Container</th>
+							     
+							      </tr>
+							      {% for obj in object.bayplanfile.get_not_ready_bay %}
+								<tr>
+									<td><a href="{% url 'container:detail' object.bayplanfile.slug obj.bay %}">{{obj.bay}}</a></td>
+									<td>{{obj.total}}</td>
+									
+								 </tr>
+								 {% endfor %}
+							</table>
+						</div>
+					</div>
+					<hr>
+				{% endif %}
+				<div class="row">
+
+					<div class="col-xs-6 col-sm-6">
+						<h3>Container details</h3>
+						<table class="table table-bordered">
+							<tr>
+								<th>Discharge Port</th>
+								<th>ISO Code</th>
+								<th>#Total</th>
+								<th>#Full</th>
+								<th>#Empty</th>
+						      </tr>
+
+							{% for obj in object.bayplanfile.get_disport_summary %}
+							  <tr>
+								<td style="background-color:{{ obj.color }}" class="text-center">{{ obj.dis_port }}</td>
+								<td class="text-center">{{ obj.iso_code }}</td>
+								<td class="text-center">{{ obj.total }}</td>
+								<td class="text-center">{{ obj.c_full }}</td>
+								<td class="text-center">{{ obj.c_mty }}</td>
+						      </tr>
+							{% endfor %}
+						</table>
+					</div>
+
+					<div class="col-xs-6 col-sm-6">
+						<h3>Bay details</h3>
+						<table class="table table-bordered">
+							<tr>
+								<th>Discharge Port</th>
+								<th>Bay</th>
+								<th>#Total</th>
+						      </tr>
+
+							{% for obj in object.bayplanfile.get_disport_bay %}
+							  <tr>
+								<td style="background-color:{{ obj.color }}" class="text-center">{{ obj.dis_port }}</td>
+								<td class="text-center"><a href="{% url 'container:detail' object.bayplanfile.slug obj.bay%}">{{ obj.bay }}</a></td>
+								<td class="text-center">{{ obj.total }}</td>
+						      </tr>
+							{% endfor %}
+						</table>
+					</div>
+
+				</div>
+
+				
+
+		{% else %}
+			<a href="{% url 'bayplan:create' object.slug %}">Upload Bay plan excel file</a>
+		{% endif %}
+
+		
+
+	</div>
+</div>
+{% endblock form_content %}

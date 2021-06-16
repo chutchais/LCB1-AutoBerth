@@ -1,0 +1,14 @@
+# created by virtualenv automatically
+backup
+env
+src/db.sqlite3
+src/*.pyc
+src/equipment/*.pyc
+src/equipment/migrations/*.pyc
+src/machine/*.pyc
+src/machine/migrations/*.pyc
+src/db.sqlite3
+src/berth/migrations/*.pyc
+src/berth/__pycache__/
+src/*.sqlite3
+src/db.sqlite3_backup

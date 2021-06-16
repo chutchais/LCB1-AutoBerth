@@ -1,0 +1,29 @@
+django
+django-debug-toolbar
+django-cors-headers
+django-colorfield
+djangorestframework
+markdown
+django-filter
+django-excel
+xlrd
+
+# Added on June 15,2021 -Test
+django-redis
+gunicorn==19.9.0
+django-crispy_forms
+django_q
+django-import-export
+redis
+
+
+# To Export from original web file
+# python .\manage.py dumpdata auth.group -o master_data\group.json
+# python .\manage.py dumpdata auth.user -o master_data\user.json
+# Remove pk=1 out from auth.json
+# python .\manage.py dumpdata berth -o master_data\berth.json
+
+# To import to new system
+# python .\manage.py loaddata master_data\group.json
+# python .\manage.py loaddata master_data\user.json
+# python .\manage.py loaddata master_data\berth.json

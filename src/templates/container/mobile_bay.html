@@ -1,0 +1,165 @@
+{% extends "mobile_base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    {{ bayfile.voy }}
+{% endblock %}
+
+
+{% block stylesheet %}
+<style>
+	.margin-left{
+    margin-left: 4px !important;
+	}
+
+	.margin-top{
+    margin-left: 2px !important;
+	}
+</style>
+{% endblock stylesheet %}
+
+{% block content %}
+
+	<div class="row">
+		<h3>{{ bayfile.voy }} <small><a href="{% url 'bayplan:index' %}?view=mobile">back</a></small></h3>
+
+		<form class='form' method='GET' action='.'>
+			<input type='text' id='search' placeholder="Search container.." name="q" value='{{ request.GET.q}}' >
+			<input type='hidden' name='view' value='mobile'>
+			<button class='btn btn-default' type='submit' id='submit'>Search</button>
+			<a href="{% url 'container:bay' bayfile.slug %}?view=mobile">Clear result</a>
+		</form>
+
+		<hr/>
+
+		<!-- Show Bay summary -->
+		{% if bays %}
+			<div class="col-sm-12 col-md-12">
+	                  {% for obj in bays %}
+	                  	<a href="{% url 'container:detail' bayfile.slug obj.bay %}?view=mobile">
+	                  		{% if obj.ready %}       
+	                    		<button type="button" class="btn btn-lg btn-success">{{obj.bay}}</button>
+	                    	{% else %}
+	                    		{% if obj.move == 0 %} 
+	                    			<button type="button" class="btn btn-lg btn-secondary">{{obj.bay}}</button>
+	                    		{% else %}
+	                    			<button type="button" class="btn btn-lg btn-warning">{{obj.bay}}</button>
+	                    		{% endif %}
+	                    	{% endif %}
+	                	</a>
+	                  {% endfor %}
+	        </div>
+
+	        <hr/>
+			{% if dups %}
+			
+				<div class="col-xs-12 col-sm-12">
+						<h3>Duplicated Slot</h3>
+						<table class="table table-bordered">
+							<tr>
+								<th>#Slot</th>
+						        <th>#Container</th>
+						     
+						      </tr>
+						      {% for obj in dups %}
+							<tr>
+								<td><a href="{% url 'container:detail' bayfile.slug obj.bay %}?view=mobile">{{obj.stowage}}</a></td>
+								<td>{{obj.number}}</td>
+								
+							 </tr>
+							 {% endfor %}
+						</table>
+				</div>
+			
+			{% endif %}
+		{% endif %}
+
+		<!-- Search Result table -->
+		{% if container_list %}
+			<div class="row">
+			<div class="col-xs-12 col-sm-12">
+				<h3>Search result of {{ request.GET.q}}</h3>
+				<table class="table table-bordered">
+					<tr>
+				        <th>Container</th>
+				        <th>Next Port</th>
+				        <th>Current Slot</th>
+				        <th>Original Slot</th>
+				        <th></th>
+				      </tr>
+				      {% for obj in container_list %}
+				      		{% get_position_by_stowage obj.stowage as pos %}
+					<tr>
+						<td {{obj.get_dischart_style|safe }}><a href="{% url 'container:detail' bayfile.slug obj.bay %}?q={{obj.container}}&view=mobile&bay={{obj.bay}}&pos={{pos}}">{{obj.container}}</a>
+							<small><small>
+												{% if obj.iso_code == "45R1"  %}
+														<span class="glyphicon glyphicon-registration-mark icon-1x"></span>
+												{%endif%}
+												{% if obj.iso_code == "45G1"  %}
+														<span class="glyphicon glyphicon-header icon-1x"></span>
+												{%endif%}
+												{% if obj.iso_code == "L5G1"  %}
+														<span class="glyphicon glyphicon-menu-hamburger icon-1x"></span>
+												{%endif%}
+											</small></small>
+						</td>
+						<td>{{obj.dis_port}}</td>
+						<td>{{obj.stowage}}</td>
+						<td>{{obj.original_stowage}}
+							{% if obj.stowage != obj.original_stowage %}
+							<small>
+								<a href="{% url 'container:container-restore' obj.slug  %}?q={{ request.GET.q }}&mode=search&view=mobile">restore</a>
+							</small>
+							{% endif %}
+						</td>
+						<td><a href="{{ obj.get_absolute_url }}?mode=search&q={{ request.GET.q }}&view=mobile&bay={{obj.bay}}">Change slot</a></td>
+					 </tr>
+					 {% endfor %}
+				</table>
+			</div>
+		</div>
+		{% endif %}
+
+		
+		
+		<hr/>
+		<h3>Logs</h3>
+  </div>
+{% endblock content %}
+
+
+{% block java_content %}
+<!-- <script>
+$(document).ready(function(){
+    $("a").click(function(){
+        alert("The paragraph was clicked.");
+    });
+});
+</script> -->
+<script>
+
+	$(document).ready(function(){
+		$('#submit').attr('disabled',true);
+		// console.print('sdsdsd');
+	 //    $('.submit').prop('disabled',true);
+	 var checkField;
+	    $('#search').keyup(function(){
+	    	checkField = $("#search").val().length;
+	        $('#submit').prop('disabled', checkField < 3 ? true : false);     
+	    })
+	});
+
+	$(function() {
+	  $('#search').focus().select();
+	});
+
+	$("input[type='text']").on("click", function () {
+        $(this).select();
+	});
+
+</script>
+
+{% endblock java_content %}

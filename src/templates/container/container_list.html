@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+	<div class="row">
+		<h3>Vesel Information : {{ object.vessel }} <small><a href="{% url 'bayplan:index' %}">Home</a></small></h3>
+	
+
+		{% if object_list %}
+				<h3>Bay Plan file details</h3>
+				<table class="table table-bordered">
+					<tr>
+						<th>#Item</th>
+				        <th>Container</th>
+				        <th>ISO</th>
+				        <th>Full/Empty</th>
+				        <th>Partner</th>
+				        <th>Weight</th>
+				        <th>Load Port</th>
+				        <th>Disc Port</th>
+				        <th>Storwage</th>
+				        <th>New Storwage</th>
+				      </tr>
+
+				      {% for obj in object_list %}
+					<tr>
+					
+						<td>{{obj.item_no}}</td>
+						<td>{{obj.container}}</td>
+						<td>{{obj.iso_code}}</td>
+						<td>{{obj.full}}</td>
+						<td>{{obj.partner}}</td>
+						<td>{{obj.weight}}</td>
+						<td>{{obj.load_port}}</td>
+						<td>{{obj.dis_port}}</td>
+						<td>{{obj.stowage}}</td>
+						<td>{{obj.new_stowage}}</td>
+					 </tr>
+					 {% endfor %}
+
+				</table>
+
+		{% endif %}
+
+		
+
+	</div>
+{% endblock form_content %}

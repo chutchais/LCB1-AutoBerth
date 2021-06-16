@@ -1,0 +1,323 @@
+{% extends "mobile_base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+	Bay : {{ bay}} - 
+	{% if pos == 'UD' %}
+		Under deck
+	{% else %}
+		Over deck
+	{% endif %}
+{% endblock %}
+
+{% block stylesheet %}
+<style>
+		td a {
+		    color: #000000;
+		}
+
+		.cell {
+		   width:200px;
+		   height:65px;
+		   position:relative;
+		   border:1px solid #eee;
+		   background-color:#fcfcfc;
+		 }
+
+		.triangle-up-right {
+		  width: 0;
+		  height: 0;
+		  border-top: 10px solid rgb(246, 85, 85);
+		  border-left: 10px solid transparent;
+		 top:0;
+		 right:0;
+		 position:absolute;
+		}
+
+		/**
+		 * Tooltip Styles
+		 */
+
+		/* Add this attribute to the element that needs a tooltip */
+		[data-tooltip] {
+		  position: relative;
+		  z-index: 2;
+		  cursor: pointer;
+		}
+
+		/* Hide the tooltip content by default */
+		[data-tooltip]:before,
+		[data-tooltip]:after {
+		  visibility: hidden;
+		  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+		  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+		  opacity: 0;
+		  pointer-events: none;
+		}
+
+		/* Position tooltip above the element */
+		[data-tooltip]:before {
+		  position: absolute;
+		  bottom: 150%;
+		  left: 50%;
+		  margin-bottom: 5px;
+		  margin-left: -80px;
+		  padding: 7px;
+		  width: 160px;
+		  -webkit-border-radius: 3px;
+		  -moz-border-radius: 3px;
+		  border-radius: 3px;
+		  background-color: #000;
+		  background-color: hsla(0, 0%, 20%, 0.9);
+		  color: #fff;
+		  content: attr(data-tooltip);
+		  text-align: center;
+		  font-size: 14px;
+		  line-height: 1.2;
+		}
+
+		/* Triangle hack to make tooltip look like a speech bubble */
+		[data-tooltip]:after {
+		  position: absolute;
+		  bottom: 150%;
+		  left: 50%;
+		  margin-left: -5px;
+		  width: 0;
+		  border-top: 5px solid #000;
+		  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+		  border-right: 5px solid transparent;
+		  border-left: 5px solid transparent;
+		  content: " ";
+		  font-size: 0;
+		  line-height: 0;
+		}
+
+		/* Show tooltip content on hover */
+		[data-tooltip]:hover:before,
+		[data-tooltip]:hover:after {
+		  visibility: visible;
+		  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+		  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+		  opacity: 1;
+		}
+</style>
+{% endblock stylesheet %}
+
+
+{% block content %}
+
+<div class="row">
+		<h3>Bay : {{bay}} -- 
+						{% if pos == 'UD' %}
+							Under Deck  
+							{% if has_on_deck %}
+								| <a href="?view=mobile&pos=OD">Over Deck</a>
+							{% endif %}
+						{% else %}
+							 Over Deck 
+							 {% if has_under_deck %}
+								| <a href="?view=mobile&pos=UD">Under Deck</a>
+							{% endif %}
+						{% endif %}
+					 </h3>
+				</hr>
+
+
+			{% if master_plan %}
+				<h3>Master Plan | <a href="{% url 'container:bay' slug %}?view=mobile">Switch new Bay</a></h3>
+				<table class="table table-bordered">
+					<tr class="active">
+						<th></th>
+						{% for t in full_tier %}
+							 <th class="text-center">{{t}}</th>
+						{% endfor %} 
+				    </tr>
+							    <!-- End Tier information -->
+
+							     <!-- Row/Stack Information -->
+							     
+								     {% for row in deck %}
+									<tr>
+										<td class="text-center">{{row}}</td>
+
+										{% for t in full_tier %}
+											{% combine_stowage bay t row as new_stowage %}
+
+											<!-- #Match Table and Slot in list -->
+											{% if new_stowage in master_slot_list %} 
+												
+												
+
+												{% get_container_by_original_stowage master_obj_list new_stowage as first_cont  %}	
+
+												{% if first_cont.ready_to_load %}
+													<td style="background-color:gray" class="text-center">
+												{% else %}
+													<td {{first_cont.get_dischart_style|safe }}>
+												{% endif %}
+
+												{% weight first_cont.weight as new_weight %}
+
+													<div class="text-nowrap">
+														
+																{% if first_cont.ready_to_load %}
+																	{{first_cont.container|slice:":3"}}..{{first_cont.container|slice:"7:" }}<br>
+																		{{new_weight }}
+																{% else %}
+																	<a href="{{ first_cont.get_absolute_url }}?view=mobile&bay={{bay}}&pos={{pos}}" 
+																		data-tooltip="{{first_cont.get_tooltip|safe}}">
+																		{{first_cont.container|slice:":3"}}..{{first_cont.container|slice:"7:" }}
+																	</a>
+																	<br>
+																	{{new_weight }}
+																{% endif %}
+
+																<small><small>
+																{% if first_cont.iso_code == "45R1"  %}
+																		<span class="glyphicon glyphicon-registration-mark icon-1x"></span>
+																{%endif%}
+																{% if first_cont.iso_code == "45G1"  %}
+																		<span class="glyphicon glyphicon-header icon-1x"></span>
+																{%endif%}
+																{% if first_cont.iso_code == "L5G1"  %}
+																		<span class="glyphicon glyphicon-menu-hamburger icon-1x"></span>
+																{%endif%}
+															</small></small>
+																<br>
+														</div>
+
+											</td>
+											{% else %}
+												<td></td>
+											{% endif %}
+
+
+												
+											
+
+										{% endfor %}
+
+									 </tr>
+									{% endfor %}
+
+
+							</table>
+
+			{% endif %}
+
+
+		<h3>Current Status | <a href="{% url 'container:bay' slug %}?view=mobile">Switch new Bay</a></h3>
+		<table class="table table-bordered">
+
+					<tr class="active">
+						<th></th>
+						{% for t in tier %}
+							 <th class="text-center">{{t}}</th>
+						{% endfor %} 
+				    </tr>
+
+				     {% for row in deck %}
+					<tr>
+						<td class="text-center">{{row}}</td>
+
+						{% for t in tier %}
+							{% combine_stowage bay t row as new_stowage %}
+
+							{% if new_stowage in container_slot_list %}
+
+								{% get_container_by_stowage container_obj_list new_stowage as first_cont  %}
+
+
+							<td {{first_cont.get_dischart_style|safe }}>
+
+								{% for x in container_obj_list|in_stowage_list:new_stowage %}
+									{% if q == x.container %}
+										<div class="bg-danger text-black">
+									{% else %}
+										<div class="text-nowrap">
+									{% endif %}
+												{% weight x.weight as new_weight %}
+												{% if x.original_stowage != x.stowage %}
+													<b>
+														<a href="{{ x.get_absolute_url }}?view=mobile&bay={{bay}}&pos={{pos}}" 
+															data-tooltip="{{x.get_tooltip|safe}}">
+															{% if mode  %}
+																{{x.container|slice:":3" }}..{{x.container|slice:"7:" }}
+															{% else %}
+																{{new_weight }}
+															{% endif %}
+														</a>
+														<br>
+														{{new_weight }}
+													</b>
+												{% else %}
+													<a href="{{ x.get_absolute_url }}?view=mobile&bay={{bay}}&pos={{pos}}" 
+															data-tooltip="{{x.get_tooltip|safe}}">
+															{% if mode  %}
+																{{x.container|slice:":3" }}..{{x.container|slice:"7:" }}
+															{% else %}
+																{{new_weight }}
+															{% endif %}
+														</a>
+														<br>
+														{{new_weight }}
+												{% endif %}
+												<small><small>
+												{% if x.iso_code == "45R1"  %}
+														<span class="glyphicon glyphicon-registration-mark icon-1x"></span>
+												{%endif%}
+												{% if x.iso_code == "45G1"  %}
+														<span class="glyphicon glyphicon-header icon-1x"></span>
+												{%endif%}
+												{% if x.iso_code == "L5G1"  %}
+														<span class="glyphicon glyphicon-menu-hamburger icon-1x"></span>
+												{%endif%}
+											</small></small>
+												<br>
+										</div>
+
+								{% endfor %}
+							</td>
+
+							{% else %}
+								<td></td>
+							{% endif %}
+
+
+
+
+						{% endfor %}
+
+					 </tr>
+					{% endfor %}
+
+				</table>
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+{% endblock content %}
+
+
+{% block java_content %}
+<!-- <script>
+$(document).ready(function(){
+    $("a").click(function(){
+        alert("The paragraph was clicked.");
+    });
+});
+</script> -->
+{% endblock java_content %}

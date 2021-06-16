@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		<h3>Vesel Information : {{ object.vessel }} <small><a href="{% url 'berth:cutoff-home' %}">Home</a></small></h3>
+		 Voy      :{{ object.voy }} <br>
+		 Service  :{{ object.service }}<br>
+		 Terminal :{{ object.terminal }}<br>
+		 Performa - In : {{ object.performa_in }}<br>
+		 Performa - Out : {{ object.performa_out }}<br>
+		 ETA : {{ object.eta }}<br>
+		 ETB : {{ object.etb }}</h3>
+		 ETD : {{ object.etd }}<br>
+		 DIS : {{ object.dis_no }}<br>
+		 LOAD : {{ object.load_no }}<br>
+		 <hr/>
+		
+		  
+<!-- 					<small><a href="{{ object.cutoff_set.first.get_absolute_url }}">edit</a></small>
+					<small><a href="{{ object.cutoff_set.first.get_absolute_url}}delete/">delete</a></small> -->
+				
+		{% if object.cutoff_set.all %}
+				<h3>Cut-Off Setup</h3>
+				<table class="table table-bordered">
+					<tr>
+				        <th>Remark</th>
+				        <th>Dry</th>
+				        <th>Reef</th>
+				        <th>Chilled</th>
+				        <th>Durian/Longan</th>
+				        <th></th>
+				      </tr>
+				{% for c in object.cutoff_set.all %}
+						<td>{{ c.remark }}</h3></td>
+					 	<td>{{ c.dry_date }}</td>
+					 	<td>{{ c.reef_date }}</td>
+					 	<td>{{ c.chilled_date }}</td>
+					 	<td>{{ c.durian_date }}</td>
+					 	<td>
+						 	<small><a href="{{c.get_absolute_url }}">Edit</a></small>
+							<small><a href="{{ c.get_absolute_url}}delete/">Delete</a></small>
+						</td>
+					 </tr>
+
+				{% endfor %}
+				</table>
+
+		{% else %}
+			<h3>No Cut-Off Setting</h3>
+		{% endif %}
+		<a href="{% url 'berth:cutoff-create' object.slug %}">Add CutOff</a>
+	</div>
+</div>
+{% endblock form_content %}

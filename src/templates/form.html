@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block head_title %}{{ title }} -- {{ block.super }} {% endblock head_title %}
+
+{% block form_content %}
+<div class="container">
+<h1>{{ title }}</h1>
+
+{% include 'snippets/form_snippet.html' %}
+
+<a href="./"> Cancel </a>
+</div>
+{% endblock form_content %}
+
+
+

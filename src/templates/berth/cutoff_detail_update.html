@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		
+				<h3>Cut-Off Setup 
+					<small>
+						<a href="{% url 'berth:cutoff-home' %}">Home</a>
+						<a href="{% url 'berth:voy-detail' object.voy.slug %}">Cut-Off</a>
+					</small>
+				</h3>
+				<table class="table table-bordered">
+<!-- 				      <tr>
+				        <th>Name</th>
+				        <th>Cut-off datetime</th>
+				      </tr> -->
+					<tr bgcolor="#FFFF00">
+					 	<td><h3>{{ object.remark }}</h3></td><td><small><a href="{{object.get_absolute_url }}">edit</a></small>
+						<small><a href="{{ object.get_absolute_url}}delete/">delete</a></small></td>
+					 </tr>
+					 <tr>
+					 	<td>Dry</td><td>{{ object.dry_date }}</td>
+					 </tr>
+					 <tr>
+					 	<td>Reef</td><td>{{ object.reef_date }}</td>
+					 </tr>
+					 <tr>
+					 	<td>Chilled</td><td>{{ object.chilled_date }}</td>
+					 </tr>
+					 <tr>
+					 	<td>Durian/Longan</td><td>{{ object.durian_date }}</td>
+					 </tr>
+					 
+
+				</table>
+	<hr/>
+	<h3>Make Change</h3>
+	{% include 'snippets/form_snippet.html' with form=form %}
+	</div>
+</div>
+{% endblock form_content %}

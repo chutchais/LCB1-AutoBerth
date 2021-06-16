@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		
+				<h3>Cut-Off Setup 
+					<small><a href="{{ object.get_absolute_url }}">edit</a></small>|
+					<small><a href="{{ object.get_absolute_url }}">delete</a></small>
+				</h3>
+				<table class="table table-bordered">
+				      <tr>
+				        <th>Remark</th>
+				        <th>Dry</th>
+				        <th>Reef</th>
+				        <th>Chilled</th>
+				        <th>Durian/Longan</th>
+				        <th></th>
+				      </tr>
+
+					
+					 <tr>
+					 	<td><h3>{{ object.remark }}</h3></td>
+					 	<td>Dry</td><td>{{ object.dry_date }}</td>
+					  	<td>Reef</td><td>{{ object.reef_date }}</td>
+					 	<td>Chilled</td><td>{{ object.chilled_date }}</td>
+					 	<td>Durian/Longan</td><td>{{ object.durian_date }}</td>
+					  	
+					  	<td><small><a href="{{object.get_absolute_url }}">edit</a></small>
+						<small><a href="{{ object.get_absolute_url}}delete/">delete</a></small></td>
+					 </tr>
+
+				</table>
+	</div>
+</div>
+{% endblock form_content %}

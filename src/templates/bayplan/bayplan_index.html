@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+<div class="row">
+    <h3>
+    Bay Plan : week {{ week }} 
+    <a href="{% url 'bayplan:index' %}?year={{year}}&week={{week|add:-1}}"><small>previous</small></a>
+    |<a href="{% url 'bayplan:index' %}"><small>current</small></a>
+    |<a href="{% url 'bayplan:index' %}?year={{year}}&week={{week|add:1}}"><small>next</small></a>
+    -- <a href="?view=mobile"><small>(Mobile mode)</small></a>
+    </h3>
+	<!-- Parameter Section -->
+
+    <table class="table table-bordered">
+      <tr class="active">
+        <th></th>
+        <th>Service</th>
+        <th>Vessel</th>
+        <th>Code</th>
+        <th>Voy</th>
+        <th>Dis</th>
+        <th>Load</th>
+        <th>Bay plan file</th>
+        <th># Container</th>
+        <th>status</th>
+      </tr>
+
+             {% for obj in B %}
+              {% cut obj.service as newService %}
+               <tr>
+                  <td>
+                  B.1
+                  </td>
+                  <td>
+                  <a href="{% url 'bayplan:voy-detail' obj.slug %}">{{ newService}}</a>
+                  </td>
+                  <td>
+                  {{ obj.vessel}}
+                    
+                  </td>
+                  <td>
+                  {{ obj.code}}
+                  </td>
+                  <td>
+                  {{ obj.voy}}
+                  </td>
+                  <td>
+                  {{ obj.dis_no}}
+                  </td>
+                  <td>
+                  {{ obj.load_no}}
+                  </td>
+                  <td>
+                    {% if obj.bayplanfile.filename  %}
+                      Uploaded
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{ obj.bayplanfile.container_set.count }}
+                  </td>
+                  <td>
+                    {% if obj.bayplanfile.upload_date %}
+                      Uploaded on {{obj.bayplanfile.upload_date}}
+                    {% endif %}
+<!--                     {% if obj.bayplanfile.uploaded %}
+                      Uploaded on {{obj.bayplanfile.upload_date}}
+ 
+                    {% endif %} -->
+                  </td>
+                </tr>
+
+
+
+
+
+              {% endfor %}
+<!--       </table>
+
+      <table class="table table-bordered"> -->
+  
+      <tr class="active">
+        <th></th>
+        <th>Service</th>
+        <th>Vessel</th>
+        <th>Code</th>
+        <th>Voy</th>
+        <th>Dis</th>
+        <th>Load</th>
+        <th>Bay plan file</th>
+        <th># Container</th>
+        <th>status</th>
+      </tr>
+
+             {% for obj in A %}
+             
+             {% cut obj.service as newService %}
+             
+               <tr>
+                  <td>
+                  A.0
+                  </td>
+                  <td>
+                  <a href="{% url 'bayplan:voy-detail' obj.slug %}">{{ newService}}</a>
+                  </td>
+                  <td>
+                  {{ obj.vessel}}
+                    
+                  </td>
+                  <td>
+                  {{ obj.code}}
+                  </td>
+                  <td>
+                  {{ obj.voy}}
+                  </td>
+                  <td>
+                  {{ obj.dis_no}}
+                  </td>
+                  <td>
+                  {{ obj.load_no}}
+                  </td>
+                  <td>
+                     {% if obj.bayplanfile.filename  %}
+                      Uploaded
+                    {% endif %}
+                  </td>
+                   <td>
+                    {{ obj.bayplanfile.container_set.count }}
+                  </td>
+                  <td>
+
+                      {% if obj.bayplanfile.upload_date %}
+                      Uploaded on {{obj.bayplanfile.upload_date}}
+                    {% endif %}
+
+
+                  </td>
+                </tr>
+
+               
+              {% endfor %}
+      </table>
+      <i>Main berth schedule last update on : {{lastupdate.modified_date}} - {{lastupdate.modified_date|timesince}} ago
+         , vessel: {{lastupdate.vessel}} - code: {{lastupdate.code}} - voy: {{lastupdate.voy}}
+      </i>
+              <!-- End Parameter-->
+</div>
+</div>
+{% endblock form_content %}

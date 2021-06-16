@@ -1,0 +1,14 @@
+{% if form.errors.non_field_errors %}
+	<div class="alert alert-danger" role="alert">
+		<h3>{{ form.errors.non_field_errors }}</h3>
+	</div>
+{% endif %}
+
+<!-- {% if form.non_field_errors %}
+  <div class="alert alert-danger">{{ form.non_field_errors|join:"<br \>" }}</div>
+  {% endif %} -->
+
+<form method='POST' enctype="multipart/form-data"> {% csrf_token %}
+{{ form.as_p }}
+<button type='submit'>Save</button>
+</form>
