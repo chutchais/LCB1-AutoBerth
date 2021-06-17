@@ -53,7 +53,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - WEBSOCKET_SERVER_URL=${WEBSOCKET_SERVER_URL}
     ports:
-      - 9000:8000
+      - 8000:8000
 
   qcluster:
     build:
@@ -86,7 +86,7 @@ services:
     depends_on:
       - redis
     ports:
-        - 9001:3000 
+        - 8001:3000 
 
 volumes:  
   redis_data:
