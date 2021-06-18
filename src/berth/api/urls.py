@@ -3,15 +3,20 @@ from django.contrib import admin
 from django.urls import path
 
 from .views import (
-    VoyListAPIView,
+    # VoyListAPIView,
     VoyDetailAPIView,
-    BerthListAPIView
+    BerthListAPIView,
+    VoyDetailAPIRedis,
+    VoyListAPIRedis
     )
 
 urlpatterns = [
-	path('', VoyListAPIView.as_view(), name='voy_list'),
+    # path('', VoyListAPIView.as_view(), name='voy_list'),
+    path('', VoyListAPIRedis, name='voy_list'),
 	path('berth/', BerthListAPIView.as_view(), name='berth_list'),
-	path('<slug>/', VoyDetailAPIView.as_view(), name='voy_detail'),
+	# path('<slug>/', VoyDetailAPIView.as_view(), name='voy_detail'),
+    path('<slug>/', VoyDetailAPIRedis, name='voy_detail'),
+
     # url(r'^$', VoyListAPIView.as_view(), name='voy_list'),
 	# url(r'berth/$', BerthListAPIView.as_view(), name='berth_list'),
 	# url(r'^(?P<slug>[\w-]+)/$', VoyDetailAPIView.as_view(), name='voy_detail'),

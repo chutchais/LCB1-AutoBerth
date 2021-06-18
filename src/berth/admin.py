@@ -11,7 +11,7 @@ import copy
 
 # from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter
 
-
+from django.utils.text import slugify
 
 def copy_new_voy(self, request, queryset):
     
@@ -33,6 +33,8 @@ def copy_new_voy(self, request, queryset):
         new_obj.imp_release_date = obj.imp_release_date + timedelta(days=7) if obj.imp_release_date != None else  obj.imp_release_date
         new_obj.export_cutoff_date = obj.export_cutoff_date + timedelta(days=7) if obj.export_cutoff_date != None else  obj.export_cutoff_date
         new_obj.draft = True
+        # on June 12,2021 --added new 
+        new_obj.slug = slugify(obj.voy + '-' + new_obj.code + '-' + new_obj.etb.strftime('%Y%m%d'))
         new_obj.save()
 
     self.message_user(request, "Draft fo %s successfully create Locker ports." % new_obj.voy)

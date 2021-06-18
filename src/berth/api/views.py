@@ -1,5 +1,10 @@
 from django.db.models import Q
 
+import redis
+db = redis.StrictRedis('berth-redis', 6379,db=0, charset="utf-8", decode_responses=True) #Production
+
+from django_q.tasks import async_task
+
 from rest_framework.generics import (
 	CreateAPIView,
 	DestroyAPIView,
@@ -39,34 +44,83 @@ class BerthListAPIView(ListAPIView):
 
 
 
-class VoyListAPIView(ListAPIView):
-	queryset=Voy.objects.all()
-	serializer_class=VoySerializer
-	filter_backends=[SearchFilter,OrderingFilter]
-	search_fields =['voy']
-	def get_queryset(self,*args,**kwargs):
-		# queryset_list=Comment.objects.filter(user=self.request.user)
-		queryset_list = Voy.objects.all()
-		from_date = self.request.GET.get("f")
-		to_date = self.request.GET.get("t")
-		terminal = self.request.GET.get("terminal")
-		print ('From : %s  -- To : %s ' % (from_date,to_date))
-		print ('Terminal %s' % terminal)
-		if terminal :
-			queryset_list = Voy.objects.filter(
+# class VoyListAPIView(ListAPIView):
+# 	# queryset=Voy.objects.all()
+# 	serializer_class=VoySerializer
+# 	filter_backends=[SearchFilter,OrderingFilter]
+# 	search_fields =['voy']
+# 	def get_queryset(self,*args,**kwargs):
+# 		# queryset_list=Comment.objects.filter(user=self.request.user)
+# 		queryset_list = Voy.objects.all()
+# 		from_date = self.request.GET.get("f")
+# 		to_date = self.request.GET.get("t")
+# 		terminal = self.request.GET.get("terminal")
+# 		print(f'VoyListAPIView : from {from_date}  to {to_date} on terminal {terminal} ')
+# 		# print ('From : %s  -- To : %s ' % (from_date,to_date))
+# 		# print ('Terminal %s' % terminal)
+# 		if terminal :
+# 			queryset_list = Voy.objects.filter(
+# 				Q(etb__range=[from_date,to_date])|
+# 				Q(etd__range=[from_date,to_date]),terminal__name__icontains=terminal).order_by('etb')
+# 		else:
+# 			queryset_list = Voy.objects.filter(
+# 					Q(etb__range=[from_date,to_date])|
+# 					Q(etd__range=[from_date,to_date])).order_by('etb')
+# 		return queryset_list
+from django.http import JsonResponse
+import json
+def VoyListAPIRedis(request):
+	from_date 	= request.GET.get("f")
+	to_date 	= request.GET.get("t")
+	terminal 	= request.GET.get("terminal")
+	if terminal :
+		queryset_list = Voy.objects.filter(
+			Q(etb__range=[from_date,to_date])|
+			Q(etd__range=[from_date,to_date]),terminal__name__icontains=terminal).order_by('etb')
+	else:
+		queryset_list = Voy.objects.filter(
 				Q(etb__range=[from_date,to_date])|
-				Q(etd__range=[from_date,to_date]),terminal__name__icontains=terminal).order_by('etb')
-		else:
-			queryset_list = Voy.objects.filter(
-					Q(etb__range=[from_date,to_date])|
-					Q(etd__range=[from_date,to_date])).order_by('etb')
-		return queryset_list
-	# filter_backends=[SearchFilter,OrderingFilter],
-	# search_fields =['content','user__first_name']
-	# pagination_class = PostPageNumberPagination
+				Q(etd__range=[from_date,to_date])).order_by('etb')
+	
+	payloads = []
+	payloads= [json.loads(get_voy_json(x.slug)) for x in queryset_list]
+	
+	return JsonResponse(payloads,safe=False)
+	
+	
 
 class VoyDetailAPIView(RetrieveAPIView):
 	queryset=Voy.objects.all()
 	serializer_class=VoyDetailSerializer
 	lookup_field='slug'
-	# print ("vessel details")
+
+
+def VoyDetailAPIRedis(request,slug):
+	## Check on Redis(db=0)
+	# key=slug
+	# if db.exists(slug):
+	# 	source_data ='Redis'
+	# 	payload = db.get(slug)
+	# else:
+	# 	voy = Voy.objects.get(slug=key)
+	# 	async_task("berth.services.save_voy_to_redis",voy)
+	# 	payload = voy.json
+	# 	source_data ='Database'
+	payload = get_voy_json(slug)
+
+	print(f'VoyDetailAPIRedis of {slug} from ...')
+	return JsonResponse(json.loads(payload),safe=False)
+	# pass
+
+def get_voy_json(slug):
+	from berth.models import Voy
+	key=slug
+	if db.exists(slug):
+		source_data ='Redis'
+		payload = db.get(slug)
+	else:
+		voy = Voy.objects.get(slug=key)
+		async_task("berth.services.save_voy_to_redis",voy)
+		payload = voy.json
+		source_data ='Database'
+	return payload

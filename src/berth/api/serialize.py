@@ -80,10 +80,6 @@ class VoyDetailSerializer(ModelSerializer):
 				'startCol','stopCol']
 
 	def get_lov(self,obj):
-		# content_type = obj.get_content_type
-		# object_id=obj.id
-		# c_qs = Comment.objects.filter_by_instance(obj)
-		# comments = CommentSerializer(c_qs,many=True).data
 		return obj.vessel.lov
 
 	def get_vessel_type(self,obj):

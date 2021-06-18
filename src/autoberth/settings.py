@@ -203,7 +203,7 @@ Q_CLUSTER = {
     'redis': {
         'host': 'berth-redis',
         'port': 6379,
-        'db': 1, }
+        'db': 6, }
 }
 
 # Added on June 12,2021

@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 
 from django.urls import reverse
 
+import json
+from django.db.models.signals import post_save,pre_save,pre_delete
+from django_q.tasks import async_task
+
 # Create your models here.
 ACTIVE='A'
 DEACTIVE='D'
@@ -166,11 +170,68 @@ class Voy(models.Model):
 
 
 		super(Voy, self).save(*args, **kwargs) # Call the "real" save() method.
+	
+	@property
+	def json(self):
+		import json
+		import datetime, pytz
+		tz = pytz.timezone('Asia/Bangkok')
+		updated_tz = datetime.datetime.now(tz=tz)
+		# json_dict =  {
+		# 		'name' : self.name,
+		# 		'resource_name':self.resource_name,
+		# 		'grand_total':float(self.grand_total),
+		# 		'charge':float(self.charge),
+		# 		'vat': float(self.charge )* float(self.vat_rate)/100,
+		# 		'wht':float(self.charge) * float(self.wht_rate)/100,
+		# 		'iswht':self.wht,
+		# 		'terminal':self.terminal,
+		# 		'qrid': self.qrid,
+		# 		'ref': self.ref,
+		# 		'paid': self.paid,
+		# 		'updated':updated_tz.strftime('%d-%m-%Y %H:%M:%S')
+		# 	}
+		json_dict = {
+				'service': self.service.name,
+				'vessel': self.vessel.name,
+				'code': self.code,
+				'voy': self.voy,
+				'performa_in': self.performa_in.strftime('%Y-%m-%dT%H:%M:%S') ,#'2021-06-12T21:00:00',
+				'performa_out': self.performa_out.strftime('%Y-%m-%dT%H:%M:%S') ,#'2021-06-15T16:00:00',
+				'eta': self.eta.strftime('%Y-%m-%dT%H:%M:%S') ,#'2021-06-15T00:01:00',
+				'etb': self.etb.strftime('%Y-%m-%dT%H:%M:%S') ,#'2021-06-15T01:00:00',
+				'etd': self.etd.strftime('%Y-%m-%dT%H:%M:%S') ,#'2021-06-16T04:00:00',
+				'lov': self.vessel.lov,
+				'dis_no': self.dis_no,
+				'load_no': self.load_no,
+				'est_teu': self.est_teu,
+				'terminal': self.terminal.name,
+				'start_pos': self.start_pos,
+				'vessel_type': self.vessel.v_type,
+				'color': self.service.color,
+				'remark': self.remark,
+				'vsl_oper': self.vsl_oper,
+				'arrival_draft': self.arrival_draft,
+				'departure_draft': self.departure_draft,
+				'slug': self.slug,
+				'draft': self.draft,
+				'startCol': self.terminal.start_range,
+				'stopCol': self.terminal.stop_range,
+				'move_performa':self.move_performa,
+				'move_confirm':self.move_confirm,
+				'text_pos':self.text_pos,
+				'qc':self.qc,
+				'inverse':self.inverse
+			}
+		return json.dumps(json_dict)
 	# class Meta:
 	# 	unique_together = ('voy', 'vessel',)
 
+def post_save_voy_receiver(sender, instance,created, *args, **kwargs):
+	async_task("berth.services.save_voy_to_redis",instance)
+	# print (f'{"New " if created else "Modify "} Job : {instance} ,save to redis successful.')
 
-
+post_save.connect(post_save_voy_receiver, sender=Voy)
 
 # Handle Slug of Vessel
 
@@ -237,27 +298,42 @@ pre_save.connect(pre_save_service_receiver, sender=Service)
 
 
 # Handle Slug of Voy
+# Original function , comment on June 18,2021
+# def create_voy_slug(instance, new_slug=None):
+#     slug = slugify(instance.voy + '-' + instance.code)
+#     print ('New slug %s' % slug)
+#     if new_slug is not None:
+#         slug = new_slug
+#     qs = Voy.objects.filter(slug=slug).order_by("-id")
+#     # qs = Voy.objects.filter(voy=instance.voy).order_by("-id")
+#     exists = qs.exists()
+#     if exists:
+#         # new_slug = "%s-%s" %(slug, qs.first().performa_in.strftime("%Y-%m-%d"))
+#         new_slug = "%s-%s" %(slug, qs.count()+1)
+#         print ('New slug %s' % new_slug)
+#         return create_voy_slug(instance, new_slug=new_slug)
+#     return slug
 
 def create_voy_slug(instance, new_slug=None):
-    slug = slugify(instance.voy + '-' + instance.code)
-    print ('New slug %s' % slug)
-    if new_slug is not None:
-        slug = new_slug
-    qs = Voy.objects.filter(slug=slug).order_by("-id")
-    # qs = Voy.objects.filter(voy=instance.voy).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        # new_slug = "%s-%s" %(slug, qs.first().performa_in.strftime("%Y-%m-%d"))
-        new_slug = "%s-%s" %(slug, qs.count()+1)
-        print ('New slug %s' % new_slug)
-        return create_voy_slug(instance, new_slug=new_slug)
+    slug = slugify(instance.voy + '-' + instance.code + '-' + instance.etb.strftime('%Y%m%d'))
+    print (f'New voy {instance} ,slug is {slug}')
+    # if new_slug is not None:
+    #     slug = new_slug
+    # qs = Voy.objects.filter(slug=slug).order_by("-id")
+    # exists = qs.exists()
+    # if exists:
+
+    #     new_slug = "%s-%s" %(slug, qs.count()+1)
+    #     print ('New slug %s' % new_slug)
+    #     return create_voy_slug(instance, new_slug=new_slug)
     return slug
 
 
 def pre_save_voy_receiver(sender, instance, *args, **kwargs):
 	# print ('Presave Trigger')
 	#To support Save as Draft 
-	instance.slug = create_voy_slug(instance)
+	if not instance.slug:
+		instance.slug = create_voy_slug(instance)
 	# if not instance.slug:
 	# 	instance.slug = create_voy_slug(instance)
 
