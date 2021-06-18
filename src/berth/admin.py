@@ -280,6 +280,10 @@ class VoyAdmin(admin.ModelAdmin):
         # ('Bay Plan',{'fields': [('bayplanfile__filename'),'bayplanfile__uploaded']}),
     ]
     actions =[copy_new_voy]
+    # save_as = True
+    save_as_continue = True
+    save_on_top =True
+    list_select_related = True
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "vessel":
@@ -296,6 +300,10 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = []
     list_display = ('name','description','color','move_performa','status')
     list_editable = ('color','move_performa')
+    # save_as = True
+    save_as_continue = True
+    save_on_top =True
+    list_select_related = True
     fieldsets = [
         ('Basic Information',{'fields': ['name','description','color','move_performa','status']}),
     ]
@@ -307,6 +315,10 @@ class TerminalAdmin(admin.ModelAdmin):
     list_filter = []
     list_display = ('name','description','start_range','stop_range','status')
     # list_editable = ('color',)
+    # save_as = True
+    save_as_continue = True
+    save_on_top =True
+    list_select_related = True
     fieldsets = [
         ('Basic Information',{'fields': ['name','description','status']}),
     ]
@@ -319,6 +331,10 @@ class VesselAdmin(admin.ModelAdmin):
     list_filter = ['v_type']
     list_display = ('name','description','lov','imo','v_type','status')
     # list_editable = ('color',)
+    # save_as = True
+    save_as_continue = True
+    save_on_top =True
+    list_select_related = True
     fieldsets = [
         ('Basic Information',{'fields': ['name','description','lov','imo','v_type','status']}),
     ]
@@ -335,6 +351,10 @@ class CutOffAdmin(admin.ModelAdmin):
     search_fields = ['voy']
     list_filter = ['voy__service']
     list_display = ['voy']
+    # save_as = True
+    save_as_continue = True
+    save_on_top =True
+    list_select_related = True
     fieldsets = [
         ('Basic Information',{'fields': [('voy'),'dry_date','reef_date','chilled_date','durian_date' ]}),
         ]
