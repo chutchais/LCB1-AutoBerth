@@ -444,9 +444,10 @@ def BayDetail(request,slug,bay):
 
 # filehandle.read()
 def FileProcess(request,slug):
+	print(f'FileProcess slug {slug}')
 	if not request.user.is_authenticated:
 		return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-
+	print(f'FileProcess slug {slug}')
 	bayfile =BayPlanFile.objects.get(slug=slug)
 	book = xlrd.open_workbook(file_contents=bayfile.filename.read())
 	xl_sheet = book.sheet_by_index(0)
@@ -505,6 +506,7 @@ def FileProcess(request,slug):
 				stowage = '0%s'% stowage
 				# print (stowage)
 			# Get Disch Port Object
+			print(f'Discharge port:{dis_port}')
 			disport_obj,created = DischargePort.objects.get_or_create(name=dis_port)
 			container_slug = slugify("%s-%s-%s" %(vContainer,item_count, voy_number))
 			c = Container(bayplanfile=bayfile,item_no=item_count,

@@ -33,7 +33,7 @@ class Container(models.Model):
 	slug = models.SlugField(unique=True,blank=True, null=True)
 	item_no = models.IntegerField()
 	container = models.CharField(max_length=11)
-	iso_code  = models.CharField(max_length=4,blank=True, null=True)
+	iso_code  = models.CharField(max_length=10,blank=True, null=True)
 	full	  = models.BooleanField(default=False)
 	partner	  = models.CharField(max_length=10,blank=True, null=True)
 	weight	  = models.IntegerField()
@@ -80,16 +80,22 @@ class Container(models.Model):
 			# return ('ISO: %s ,F/E : %s' % (self.iso_code,'FULL' if self.full else 'MTY'))
 
 
+# def create_container_slug(instance, new_slug=None):
+#     slug = slugify("%s-%s" %(instance.container, instance.item_no))
+#     if new_slug is not None:
+#         slug = new_slug
+#     qs = Container.objects.filter(slug=slug).order_by("-id")
+#     exists = qs.exists()
+#     if exists:
+#         new_slug = "%s-%s" %(slug, qs.count())
+#         return create_container_slug(instance, new_slug=new_slug)
+#     return slug
+
 def create_container_slug(instance, new_slug=None):
-    slug = slugify("%s-%s" %(instance.container, instance.item_no))
-    if new_slug is not None:
-        slug = new_slug
-    qs = Container.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.count())
-        return create_container_slug(instance, new_slug=new_slug)
-    return slug
+	from datetime import datetime
+	slug = slugify(f'{instance.container}{instance.item_no} + "-" + {datetime.now().strftime("%dT%H:%M:%S")}')
+	print (f'New Container {instance} ,slug is {slug}')
+	return slug
 
 
 def pre_save_container_receiver(sender, instance, *args, **kwargs):
@@ -99,16 +105,22 @@ def pre_save_container_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(pre_save_container_receiver, sender=Container)
 
 
+# def create_disport_slug(instance, new_slug=None):
+#     slug = slugify("%s" %(instance.name))
+#     if new_slug is not None:
+#         slug = new_slug
+#     qs = DischargePort.objects.filter(slug=slug).order_by("-id")
+#     exists = qs.exists()
+#     if exists:
+#         new_slug = "%s-%s" %(slug, qs.count())
+#         return create_disport_slug(instance, new_slug=new_slug)
+#     return slug
+
 def create_disport_slug(instance, new_slug=None):
-    slug = slugify("%s" %(instance.name))
-    if new_slug is not None:
-        slug = new_slug
-    qs = DischargePort.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.count())
-        return create_disport_slug(instance, new_slug=new_slug)
-    return slug
+	from datetime import datetime
+	slug = slugify(f'{instance.name}')
+	print (f'New DischargePort {instance} ,slug is {slug}')
+	return slug
 
 
 def pre_save_disport_receiver(sender, instance, *args, **kwargs):

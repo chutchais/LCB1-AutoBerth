@@ -59,17 +59,23 @@ class BayPlanFile(models.Model):
 	# 	if self.dis_port.color:
 	# 		return ('style="background-color:%s" class="text-center"' % self.dis_port.color)
 
+# Comment on June 20,2021
+# def create_bayplan_slug(instance, new_slug=None):
+#     slug = slugify(instance.filename)
+#     if new_slug is not None:
+#         slug = new_slug
+#     qs = BayPlanFile.objects.filter(slug=slug).order_by("-id")
+#     exists = qs.exists()
+#     if exists:
+#         new_slug = "%s-%s" %(slug, qs.count())
+#         return create_bayplan_slug(instance, new_slug=new_slug)
+#     return slug
 
 def create_bayplan_slug(instance, new_slug=None):
-    slug = slugify(instance.filename)
-    if new_slug is not None:
-        slug = new_slug
-    qs = BayPlanFile.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.count())
-        return create_bayplan_slug(instance, new_slug=new_slug)
-    return slug
+	from datetime import datetime
+	slug = slugify(instance.filename.name + '-' + datetime.now().strftime('%Y%m%dT%H:%M:%S'))
+	print (f'New Bayplan {instance} ,slug is {slug}')
+	return slug
 
 
 def pre_save_bayplan_receiver(sender, instance, *args, **kwargs):

@@ -6,7 +6,7 @@ djangorestframework
 markdown
 django-filter
 django-excel
-xlrd
+xlrd==1.2.0
 
 # Added on June 15,2021 -Test
 django-redis

@@ -12,3 +12,6 @@ src/berth/migrations/*.pyc
 src/berth/__pycache__/
 src/*.sqlite3
 src/db.sqlite3_backup
+src/autoberth/__pycache__/settings.cpython-36.pyc
+src/autoberth/__pycache__/settings.cpython-36.pyc
+src/autoberth/__pycache__/settings.cpython-36.pyc
