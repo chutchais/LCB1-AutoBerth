@@ -16,9 +16,9 @@ from django_q.tasks import async_task
 ACTIVE='A'
 DEACTIVE='D'
 STATUS_CHOICES = (
-        (ACTIVE, 'Active'),
-        (DEACTIVE, 'Deactive'),
-    )
+		(ACTIVE, 'Active'),
+		(DEACTIVE, 'Deactive'),
+	)
 
 
 class Terminal(models.Model):
@@ -57,10 +57,10 @@ class Vessel(models.Model):
 	B ='BARGE'
 	N = 'NOTICE'
 	VESSEL_TYPE_CHOICES = (
-        (V, 'Vessel'),
-        (B, 'Barge'),
-        (N, 'Notice'),
-    )
+		(V, 'Vessel'),
+		(B, 'Barge'),
+		(N, 'Notice'),
+	)
 	name = models.CharField(max_length=50,primary_key=True)
 	slug = models.SlugField(unique=True,blank=True, null=True)
 	description = models.CharField(max_length=255,blank=True, null=True)
@@ -82,11 +82,11 @@ class Voy(models.Model):
 	T = 'T'
 	B = 'B'
 	TEXT_POS_CHOICES = (
-        (R, 'Right'),
-        (L, 'Left'),
-        (T, 'Top'),
-        (B, 'Buttom'),
-    )
+		(R, 'Right'),
+		(L, 'Left'),
+		(T, 'Top'),
+		(B, 'Buttom'),
+	)
 	voy = models.CharField(max_length=50 )#,primary_key=True
 	slug = models.SlugField(unique=True,blank=True, null=True)
 	code = models.CharField(max_length=20,blank=True, null=True)
@@ -236,20 +236,20 @@ post_save.connect(post_save_voy_receiver, sender=Voy)
 # Handle Slug of Vessel
 
 def create_vessel_slug(instance, new_slug=None):
-    slug = slugify(instance.name)
-    if new_slug is not None:
-        slug = new_slug
-    qs = Vessel.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.first().lov)
-        return create_vessel_slug(instance, new_slug=new_slug)
-    return slug
+	slug = slugify(instance.name)
+	# if new_slug is not None:
+	# 	slug = new_slug
+	# qs = Vessel.objects.filter(slug=slug).order_by("-id")
+	# exists = qs.exists()
+	# if exists:
+	# 	new_slug = "%s-%s" %(slug, qs.first().lov)
+	# 	return create_vessel_slug(instance, new_slug=new_slug)
+	return slug
 
 
 def pre_save_vessel_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = create_vessel_slug(instance)
+	if not instance.slug:
+		instance.slug = create_vessel_slug(instance)
 
 pre_save.connect(pre_save_vessel_receiver, sender=Vessel)
 
@@ -257,20 +257,20 @@ pre_save.connect(pre_save_vessel_receiver, sender=Vessel)
 # Handle Slug of Terminal
 
 def create_terminal_slug(instance, new_slug=None):
-    slug = slugify(instance.name)
-    if new_slug is not None:
-        slug = new_slug
-    qs = Terminal.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.first().id)
-        return create_terminal_slug(instance, new_slug=new_slug)
-    return slug
+	slug = slugify(instance.name)
+	# if new_slug is not None:
+	# 	slug = new_slug
+	# qs = Terminal.objects.filter(slug=slug).order_by("-id")
+	# exists = qs.exists()
+	# if exists:
+	# 	new_slug = "%s-%s" %(slug, qs.first().id)
+	# 	return create_terminal_slug(instance, new_slug=new_slug)
+	return slug
 
 
 def pre_save_terminal_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = create_terminal_slug(instance)
+	if not instance.slug:
+		instance.slug = create_terminal_slug(instance)
 
 pre_save.connect(pre_save_terminal_receiver, sender=Terminal)
 
@@ -278,20 +278,20 @@ pre_save.connect(pre_save_terminal_receiver, sender=Terminal)
 # Handle Slug of Service
 
 def create_service_slug(instance, new_slug=None):
-    slug = slugify(instance.name)
-    if new_slug is not None:
-        slug = new_slug
-    qs = Service.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" %(slug, qs.first().id)
-        return create_service_slug(instance, new_slug=new_slug)
-    return slug
+	slug = slugify(instance.name)
+	# if new_slug is not None:
+	# 	slug = new_slug
+	# qs = Service.objects.filter(slug=slug).order_by("-id")
+	# exists = qs.exists()
+	# if exists:
+	# 	new_slug = "%s-%s" %(slug, qs.first().id)
+	# 	return create_service_slug(instance, new_slug=new_slug)
+	return slug
 
 
 def pre_save_service_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = create_service_slug(instance)
+	if not instance.slug:
+		instance.slug = create_service_slug(instance)
 
 pre_save.connect(pre_save_service_receiver, sender=Service)
 
@@ -315,18 +315,17 @@ pre_save.connect(pre_save_service_receiver, sender=Service)
 #     return slug
 
 def create_voy_slug(instance, new_slug=None):
-    slug = slugify(instance.voy + '-' + instance.code + '-' + instance.etb.strftime('%Y%m%d'))
-    print (f'New voy {instance} ,slug is {slug}')
-    # if new_slug is not None:
-    #     slug = new_slug
-    # qs = Voy.objects.filter(slug=slug).order_by("-id")
-    # exists = qs.exists()
-    # if exists:
-
-    #     new_slug = "%s-%s" %(slug, qs.count()+1)
-    #     print ('New slug %s' % new_slug)
-    #     return create_voy_slug(instance, new_slug=new_slug)
-    return slug
+	slug = slugify(instance.voy + '-' + instance.code)
+	print (f'New voy {instance} ,slug is {slug}')
+	if new_slug is not None:
+	    slug = new_slug
+	qs = Voy.objects.filter(slug=slug).order_by("-id")
+	exists = qs.exists()
+	if exists:
+	    new_slug =slugify( "%s-%s-%s" %(instance.voy,instance.code,instance.id))
+	    print ('New slug %s' % new_slug)
+	    return create_voy_slug(instance, new_slug=new_slug)
+	return slug
 
 
 def pre_save_voy_receiver(sender, instance, *args, **kwargs):
@@ -374,7 +373,7 @@ class cutoff(models.Model):
 	created_date = models.DateTimeField(auto_now_add=True)
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
 	# user = models.ForeignKey('auth.User',blank=True,null=True)
-	
+	user = models.ForeignKey('auth.User',blank=True,null=True,on_delete=models.SET_NULL)
 	remark = models.TextField(max_length=255,blank=True, null=True)
 
 	def __str__(self):

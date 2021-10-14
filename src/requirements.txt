@@ -24,6 +24,6 @@ redis
 # python .\manage.py dumpdata berth -o master_data\berth.json
 
 # To import to new system
-# python .\manage.py loaddata master_data\group.json
-# python .\manage.py loaddata master_data\user.json
-# python .\manage.py loaddata master_data\berth.json
+# python manage.py loaddata master_data/group.json
+# python manage.py loaddata master_data/user.json
+# python manage.py loaddata master_data/berth.json
