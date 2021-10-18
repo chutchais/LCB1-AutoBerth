@@ -24,6 +24,13 @@ redis
 # python .\manage.py dumpdata berth -o master_data\berth.json
 
 # To import to new system
-# python manage.py loaddata master_data/group.json
-# python manage.py loaddata master_data/user.json
-# python manage.py loaddata master_data/berth.json
+# docker-compose exec web-server python manage.py loaddata master_data/group.json
+# docker-compose exec web-server python manage.py loaddata master_data/user.json
+
+# Open shell
+# docker-compose exec web-server python manage.py shell
+# from berth.models import Voy,cutoff,Vessel
+# Voy.objects.all().delete()
+# cutoff.objects.all().delete()
+# Vessel.objects.all().delete()
+# docker-compose exec web-server python manage.py loaddata master_data/berth.json
