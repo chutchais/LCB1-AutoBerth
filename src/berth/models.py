@@ -375,6 +375,8 @@ class cutoff(models.Model):
 	# user = models.ForeignKey('auth.User',blank=True,null=True)
 	user = models.ForeignKey('auth.User',blank=True,null=True,on_delete=models.SET_NULL)
 	remark = models.TextField(max_length=255,blank=True, null=True)
+	# Added on Oct 19,2021 -- To support Truck window (requested by Operation)
+	return_date = models.DateTimeField(verbose_name ='Start return Date ',blank=True, null=True)
 
 	def __str__(self):
 		return ('%s' % (self.voy))

@@ -350,13 +350,14 @@ admin.site.register(ReportFile)
 class CutOffAdmin(admin.ModelAdmin):
     search_fields = ['voy']
     list_filter = ['voy__service']
-    list_display = ['voy']
+    list_display = ['voy','dry_date','return_date']
     # save_as = True
     save_as_continue = True
     save_on_top =True
     list_select_related = True
+    raw_id_fields = ['voy']
     fieldsets = [
-        ('Basic Information',{'fields': [('voy'),'dry_date','reef_date','chilled_date','durian_date' ]}),
+        ('Basic Information',{'fields': [('voy'),'dry_date','reef_date','chilled_date','durian_date','return_date' ]}),
         ]
 
 admin.site.register(cutoff,CutOffAdmin)

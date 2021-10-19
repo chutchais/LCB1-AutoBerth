@@ -4,7 +4,7 @@ from .models import cutoff,Voy
 class CutoffForm(ModelForm):
 	class Meta:
 		model = cutoff
-		fields = ['dry_date','reef_date','chilled_date','durian_date','remark']
+		fields = ['dry_date','reef_date','chilled_date','durian_date','return_date','remark']
 
 	def __init__(self,voy=None,*args,**kwargs):
 		# voy = kwargs.pop('voy')
