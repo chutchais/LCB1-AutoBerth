@@ -34,9 +34,14 @@ from django.contrib.auth.views import LoginView
 #     url(r'api/bayplan/', include("bayplan.api.urls", namespace='bayplan-api')),
 #     url(r'api/container/', include("container.api.urls", namespace='container-api')),
 # ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
+
 urlpatterns = [
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
     path('', include('berth.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls,name='admin'),
     path('login/', LoginView.as_view(),name='login'),
     # path('berth/', include(('berth.urls','berth')), namespace='berth'),
     path('berth/',include(('berth.urls','berth'), namespace='berth')),
@@ -54,3 +59,8 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
+
+
+from django.contrib import admin
+admin.site.site_header = 'LCB1 Auto Berth'
+admin.site.site_title = 'LCB1 Auto Berth'
