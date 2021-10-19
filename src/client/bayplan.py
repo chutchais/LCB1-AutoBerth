@@ -13,8 +13,11 @@ from PIL import Image
 import pytesseract
 import cv2
 
-url = 'http://192.168.10.20:8003/api'
+# url = 'http://192.168.10.20:8003/api'
 # url = 'http://127.0.0.1:8000/api'
+
+url = 'http://10.24.50.96:8000/api'
+
 x = 0
 y = 0 
 w = 0
