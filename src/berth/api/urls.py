@@ -7,13 +7,15 @@ from .views import (
     VoyDetailAPIView,
     BerthListAPIView,
     VoyDetailAPIRedis,
-    VoyListAPIRedis
+    VoyListAPIRedis,
+    TruckWindowListAPIView
     )
 
 urlpatterns = [
     # path('', VoyListAPIView.as_view(), name='voy_list'),
     path('', VoyListAPIRedis, name='voy_list'),
 	path('berth/', BerthListAPIView.as_view(), name='berth_list'),
+    path('truck-window/', TruckWindowListAPIView.as_view(), name='truck-window'),
 	# path('<slug>/', VoyDetailAPIView.as_view(), name='voy_detail'),
     path('<slug>/', VoyDetailAPIRedis, name='voy_detail'),
 

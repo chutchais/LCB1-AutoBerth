@@ -96,3 +96,13 @@ class VoyDetailSerializer(ModelSerializer):
 
 	def get_stopCol(self,obj):
 		return obj.terminal.stop_range
+
+
+# Added on Oct 19,2021
+class TruckWindowSerializer(ModelSerializer):
+	class Meta:
+		model = Voy
+		fields =['service','vessel','code','voy',
+				'performa_in','performa_out','eta','etb','etd',
+				'terminal','vsl_oper','imp_release_date','imp_release_date',
+				'export_cutoff_date']

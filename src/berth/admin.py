@@ -275,7 +275,7 @@ class VoyAdmin(admin.ModelAdmin):
         ('Performa',{'fields': [('performa_in','performa_out'),'move_confirm']}),
         ('Container Information',{'fields': [('dis_no','load_no'),'est_teu','qc']}),
         ('Estimate Time',{'fields': [('eta','etb','etd')]}),
-        # ('Import/Export Control',{'fields': [('imp_release_date','export_cutoff_date')]}),
+        ('Import/Export Control',{'fields': [('imp_release_date','export_cutoff_date')]}),
         ('Save as Draft',{'fields': [('draft'),'text_pos']}),
         # ('Bay Plan',{'fields': [('bayplanfile__filename'),'bayplanfile__uploaded']}),
     ]

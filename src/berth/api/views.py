@@ -19,7 +19,7 @@ from rest_framework.filters import (
 	OrderingFilter,
 	)
 
-from .serialize import VoySerializer,VoyDetailSerializer,BerthSerializer
+from .serialize import VoySerializer,VoyDetailSerializer,BerthSerializer,TruckWindowSerializer
 from berth.models import Voy
 
 
@@ -124,3 +124,45 @@ def get_voy_json(slug):
 		payload = voy.json
 		source_data ='Database'
 	return payload
+
+# Added on 
+# def truck_window(request,week=2):
+# 	from django.db.models import Q
+# 	from django.db.models import Max
+# 	import datetime
+# 	from datetime import timedelta
+# 	# Use current week
+# 	today= datetime.date.today()
+# 	from_date = today -  timedelta(days=today.weekday())
+# 	to_date = from_date +  timedelta(days=week*7)
+# 	# year = to_date.strftime('%Y')#-%m-%d %H:%M
+# 	# workweek = today.isocalendar()[1]
+# 	print (f'Truck window From date : {from_date} To date : {to_date}')
+
+# 	voys = Voy.objects.filter(
+# 		Q(etb__range=[from_date,to_date]),
+# 		vessel__v_type='VESSEL',
+# 		draft=False
+# 		).exclude(load_no=0,terminal = 'B2').order_by('etb')
+# 	payloads={'from':from_date,
+# 			'to':to_date}
+# 	return JsonResponse(payloads,safe=False)
+
+class TruckWindowListAPIView(ListAPIView):
+	queryset			=	Voy.objects.all()
+	serializer_class	=	TruckWindowSerializer
+	filter_backends		=	[SearchFilter,OrderingFilter]
+	# search_fields =['vessel__name','voy','code']
+
+	def get_queryset(self,*args,**kwargs):
+		import datetime
+		from datetime import timedelta
+		today		= datetime.date.today()
+		from_date 	= today -  timedelta(days=today.weekday())
+		to_date 	= today +  timedelta(days=14)
+		queryset_list = Voy.objects.filter(
+				Q(etb__range=[from_date,to_date]),
+				vessel__v_type='VESSEL',
+				draft=False
+				).exclude(terminal__name='B2').order_by('etb')
+		return queryset_list
