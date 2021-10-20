@@ -116,7 +116,7 @@ class Voy(models.Model):
 	text_pos = models.CharField(verbose_name ="Text position for Barge",max_length=1,choices=TEXT_POS_CHOICES,default=R)
 	next_date = models.IntegerField(verbose_name ='Next arrive date',default=14)
 	imp_release_date = models.DateTimeField(verbose_name ='Import Release Date',help_text='',blank=True, null=True)
-	export_cutoff_date = models.DateTimeField(verbose_name ='Export Cutoff Date',blank=True, null=True)
+	export_cutoff_date = models.DateTimeField(verbose_name ='Export Return Start Date',blank=True, null=True)
 	inverse = models.BooleanField(verbose_name ='Inverse 180',default=False)
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
 
