@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path
 
 from .views import (
-    # VoyListAPIView,
+    VoyListAPIView,
     VoyDetailAPIView,
     BerthListAPIView,
     VoyDetailAPIRedis,
@@ -12,8 +12,8 @@ from .views import (
     )
 
 urlpatterns = [
-    # path('', VoyListAPIView.as_view(), name='voy_list'),
-    path('', VoyListAPIRedis, name='voy_list'),
+    path('', VoyListAPIView.as_view(), name='voy_list'),
+    # path('', VoyListAPIRedis, name='voy_list'),
 	path('berth/', BerthListAPIView.as_view(), name='berth_list'),
     path('truck-window/', TruckWindowListAPIView.as_view(), name='truck-window'),
 	# path('<slug>/', VoyDetailAPIView.as_view(), name='voy_detail'),

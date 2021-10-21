@@ -44,29 +44,29 @@ class BerthListAPIView(ListAPIView):
 
 
 
-# class VoyListAPIView(ListAPIView):
-# 	# queryset=Voy.objects.all()
-# 	serializer_class=VoySerializer
-# 	filter_backends=[SearchFilter,OrderingFilter]
-# 	search_fields =['voy']
-# 	def get_queryset(self,*args,**kwargs):
-# 		# queryset_list=Comment.objects.filter(user=self.request.user)
-# 		queryset_list = Voy.objects.all()
-# 		from_date = self.request.GET.get("f")
-# 		to_date = self.request.GET.get("t")
-# 		terminal = self.request.GET.get("terminal")
-# 		print(f'VoyListAPIView : from {from_date}  to {to_date} on terminal {terminal} ')
-# 		# print ('From : %s  -- To : %s ' % (from_date,to_date))
-# 		# print ('Terminal %s' % terminal)
-# 		if terminal :
-# 			queryset_list = Voy.objects.filter(
-# 				Q(etb__range=[from_date,to_date])|
-# 				Q(etd__range=[from_date,to_date]),terminal__name__icontains=terminal).order_by('etb')
-# 		else:
-# 			queryset_list = Voy.objects.filter(
-# 					Q(etb__range=[from_date,to_date])|
-# 					Q(etd__range=[from_date,to_date])).order_by('etb')
-# 		return queryset_list
+class VoyListAPIView(ListAPIView):
+	# queryset=Voy.objects.all()
+	serializer_class=VoySerializer
+	filter_backends=[SearchFilter,OrderingFilter]
+	search_fields =['voy']
+	def get_queryset(self,*args,**kwargs):
+		# queryset_list=Comment.objects.filter(user=self.request.user)
+		queryset_list = Voy.objects.all()
+		from_date = self.request.GET.get("f")
+		to_date = self.request.GET.get("t")
+		terminal = self.request.GET.get("terminal")
+		print(f'VoyListAPIView : from {from_date}  to {to_date} on terminal {terminal} ')
+		# print ('From : %s  -- To : %s ' % (from_date,to_date))
+		# print ('Terminal %s' % terminal)
+		if terminal :
+			queryset_list = Voy.objects.filter(
+				Q(etb__range=[from_date,to_date])|
+				Q(etd__range=[from_date,to_date]),terminal__name__icontains=terminal).order_by('etb')
+		else:
+			queryset_list = Voy.objects.filter(
+					Q(etb__range=[from_date,to_date])|
+					Q(etd__range=[from_date,to_date])).order_by('etb')
+		return queryset_list
 from django.http import JsonResponse
 import json
 def VoyListAPIRedis(request):
