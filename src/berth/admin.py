@@ -23,7 +23,8 @@ def copy_new_voy(self, request, queryset):
         print (obj.voy)
         new_obj = copy.copy(obj)
         # initial Data
-        new_obj.id= None
+        # Comment on Oct 21,2021 -- To fix after copy Voy not show on Excel
+        # new_obj.id= None
         new_obj.voy = obj.voy+'_draft'
         new_obj.performa_in = obj.performa_in + timedelta(days=7)
         new_obj.performa_out = obj.performa_out + timedelta(days=7)
@@ -35,6 +36,9 @@ def copy_new_voy(self, request, queryset):
         new_obj.draft = True
         # on June 12,2021 --added new 
         new_obj.slug = slugify(obj.voy + '-' + new_obj.code + '-' + new_obj.etb.strftime('%Y%m%d'))
+        # Modify on Oct 21,2021 --To fix 
+        new_obj.save()
+        new_obj.slug = slugify( "%s-%s-%s" %(obj.voy,obj.code,new_obj.id))
         new_obj.save()
 
     self.message_user(request, "Draft fo %s successfully create Locker ports." % new_obj.voy)
