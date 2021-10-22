@@ -189,10 +189,16 @@ def cutoff(request):
 	# import datetimequit
 	year = request.GET.get('year', '')
 	workweek = request.GET.get('week', '')
-	
+	import pytz
+	from datetime import datetime
+	tz = pytz.timezone('Asia/Bangkok')
+	today = datetime.now(tz=tz).replace(tzinfo=None) #remove aware timezone
+
 	if workweek=='' and year=='':
 		# Use current week
-		today= datetime.date.today()
+		# today= datetime.date.today()
+		
+
 		from_date = today -  timedelta(days=today.weekday())
 		to_date = from_date +  timedelta(days=8)
 
@@ -269,8 +275,9 @@ def cutoff(request):
 
 	c_obj_list =list(c)
 	lastupdate = c_obj_list[0]
-	# lastupdate = c.first()
-	print ('Year %s' % year)
+	# print(lastupdate['modified_date'])
+
+	print ('Year %s , Week %s' % (year,workweek))
 
 	return render(request, 'cutoff.html', {'A':a,
 						'B':b,

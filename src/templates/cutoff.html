@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load system_tag %}
+{% load tz %}
 
 {% block head %}
 {% endblock head %}
@@ -674,7 +675,12 @@
                     <!-- End Show Second CutOff -->
               {% endfor %}
       </table>
-      <i>Main berth schedule last update on : {{lastupdate.modified_date}} - {{lastupdate.modified_date|timesince}} ago
+      <i>Main berth schedule last update on : 
+        
+        {% localtime on %}
+          {{lastupdate.modified_date}}
+        {% endlocaltime %}
+        - {{lastupdate.modified_date|timesince}} ago
          , vessel: {{lastupdate.vessel}} - code: {{lastupdate.code}} - voy: {{lastupdate.voy}}
       </i>
               <!-- End Parameter-->
