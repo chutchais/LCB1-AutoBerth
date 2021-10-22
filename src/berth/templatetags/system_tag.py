@@ -96,7 +96,7 @@ def get_position_by_stowage(slot):
 
 @register.filter
 def in_stowage(obj, stowage):
-    return obj.filter(stowage = stowage)
+	return obj.filter(stowage = stowage)
 
 @register.filter
 def in_stowage_list(obj_list, slot):
@@ -109,15 +109,15 @@ def in_stowage_list(obj_list, slot):
 
 @register.filter
 def original_stowage(obj, stowage):
-    return obj.filter(original_stowage = stowage)
+	return obj.filter(original_stowage = stowage)
 
 @register.filter
 def in_bay(obj, bay):
-    return obj.filter(bay__startswith =bay)
+	return obj.filter(bay__startswith =bay)
 
 @register.filter
 def filename(value):
-    return os.path.basename(value.file.name)
+	return os.path.basename(value.file.name)
 
 
 # @register.assignment_tag
@@ -129,8 +129,21 @@ def cut(service):
 # @register.assignment_tag
 @register.simple_tag
 def is_arrive(etb,etd):
-	if etb < datetime.datetime.now():
-		if etd < datetime.datetime.now():
+	# Added on Oct 22,2021 -- To support Docker
+	import pytz
+	from datetime import datetime
+	tz = pytz.timezone('Asia/Bangkok')
+	local_now = datetime.now(tz=tz).replace(tzinfo=None) #remove aware timezone
+	
+	# if etb < datetime.datetime.now():
+	# 	if etd < datetime.datetime.now():
+	# 		return 'Departed'
+	# 	return 'Arrived'
+	# else:
+	# 	return '...'
+	
+	if etb < local_now:
+		if etd < local_now:
 			return 'Departed'
 		return 'Arrived'
 	else:
@@ -150,15 +163,22 @@ def is_fix_cutoff(service):
 # @register.assignment_tag
 @register.simple_tag
 def is_overdue(perform_date):
-	import datetime
-	now = datetime.datetime.now()
+	# Comment on Oct 22,2021 -- TO fix error when run on Docker
+	# import datetime
+	# now = datetime.datetime.now()
+
+	# Added on Oct 22,2021 -- To support Docker
+	import pytz
+	from datetime import datetime
+	tz = pytz.timezone('Asia/Bangkok')
+	local_now = datetime.now(tz=tz).replace(tzinfo=None) #remove aware timezone
 
 	# print (perform_date)
 	if perform_date == None:
 		print ('perform_date is None')
 		return ''
 
-	if perform_date < now:
+	if perform_date < local_now:
 		# print((now-perform_date).total_seconds()/60)
 		return 'class= danger'
 	# else:
@@ -236,11 +256,11 @@ def get_fix_cutoff(service,perform_date):
 		return Sunday.replace(hour=4, minute=00)
 	
 	if '009' in strService :
-    		# return Saturday.replace(hour=12, minute=00) #Change on March 20,2018
+			# return Saturday.replace(hour=12, minute=00) #Change on March 20,2018
 		return Sunday.replace(hour=4, minute=00)
 	
 	if 'TP11' in strService :
-    		# return Saturday.replace(hour=12, minute=00) #Change on March 20,2018
+			# return Saturday.replace(hour=12, minute=00) #Change on March 20,2018
 		return Sunday.replace(hour=4, minute=00)
 
 	if 'SE1' in strService :
@@ -272,11 +292,11 @@ def get_fix_cutoff(service,perform_date):
 		return perform_date - datetime.timedelta(hours=12)
 	
 	if 'THAI2A' in strService :
-    		# print('THAI2 %s' % firstday)
+			# print('THAI2 %s' % firstday)
 		return perform_date - datetime.timedelta(hours=12)
 	
 	if 'THAI2B' in strService :
-    		# print('THAI2 %s' % firstday)
+			# print('THAI2 %s' % firstday)
 		return perform_date - datetime.timedelta(hours=12)
 # Add on Dec 21,2018 
 	if 'ANX' in strService :
@@ -317,8 +337,8 @@ def add( value, arg ):
 	Returns empty string on any error.
 	'''
 	try:
-	    value = int( value )
-	    arg = int( arg )
-	    if arg: return value + arg
+		value = int( value )
+		arg = int( arg )
+		if arg: return value + arg
 	except: pass
 	return ''
