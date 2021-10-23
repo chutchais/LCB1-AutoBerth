@@ -24,7 +24,7 @@ def copy_new_voy(self, request, queryset):
         new_obj = copy.copy(obj)
         # initial Data
         # Comment on Oct 21,2021 -- To fix after copy Voy not show on Excel
-        # new_obj.id= None
+        new_obj.id= None
         new_obj.voy = obj.voy+'_draft'
         new_obj.performa_in = obj.performa_in + timedelta(days=7)
         new_obj.performa_out = obj.performa_out + timedelta(days=7)
@@ -34,11 +34,8 @@ def copy_new_voy(self, request, queryset):
         new_obj.imp_release_date = obj.imp_release_date + timedelta(days=7) if obj.imp_release_date != None else  obj.imp_release_date
         new_obj.export_cutoff_date = obj.export_cutoff_date + timedelta(days=7) if obj.export_cutoff_date != None else  obj.export_cutoff_date
         new_obj.draft = True
-        # on June 12,2021 --added new 
+        # Modify on Oct 23,2021 -- To fix original voy is missing after copy
         new_obj.slug = slugify(obj.voy + '-' + new_obj.code + '-' + new_obj.etb.strftime('%Y%m%d'))
-        # Modify on Oct 21,2021 --To fix 
-        new_obj.save()
-        new_obj.slug = slugify( "%s-%s-%s" %(obj.voy,obj.code,new_obj.id))
         new_obj.save()
 
     self.message_user(request, "Draft fo %s successfully create Locker ports." % new_obj.voy)
@@ -275,7 +272,7 @@ class VoyAdmin(admin.ModelAdmin):
         'eta','etb','etd','dis_no','load_no','est_teu','arrival_draft','vsl_oper')
     fieldsets = [
         ('Basic Information',{'fields': [('voy'),'code',('service','vessel','vsl_oper'),
-        	('terminal','start_pos','inverse'),('arrival_draft','departure_draft'),'remark']}),
+        	('terminal','start_pos','inverse'),('arrival_draft','departure_draft'),'remark','slug']}),
         ('Performa',{'fields': [('performa_in','performa_out'),'move_confirm']}),
         ('Container Information',{'fields': [('dis_no','load_no'),'est_teu','qc']}),
         ('Estimate Time',{'fields': [('eta','etb','etd')]}),
@@ -288,6 +285,7 @@ class VoyAdmin(admin.ModelAdmin):
     save_as_continue = True
     save_on_top =True
     list_select_related = True
+    readonly_fields = ('slug',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "vessel":

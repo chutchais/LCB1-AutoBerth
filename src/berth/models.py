@@ -333,6 +333,11 @@ def pre_save_voy_receiver(sender, instance, *args, **kwargs):
 	#To support Save as Draft 
 	if not instance.slug:
 		instance.slug = create_voy_slug(instance)
+	else :
+		new_slug = slugify( "%s-%s-%s" %(instance.voy,instance.code,instance.id))
+		if instance.slug != new_slug:
+			instance.slug = new_slug
+
 	# if not instance.slug:
 	# 	instance.slug = create_voy_slug(instance)
 
