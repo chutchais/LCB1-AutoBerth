@@ -319,8 +319,8 @@ def truckWindow(request):
 	voys = Voy.objects.filter(
 		Q(etb__range=[from_date,to_date]),
 		vessel__v_type='VESSEL',
-		draft=False).exclude(
-			terminal='B2',load_no=0).order_by('etb')
+		draft=False,load_no__gt=0).exclude(
+			Q(terminal='B2')|Q(load_no=0)).order_by('etb')
 
 	return render(request, 'truckwindow.html', {'object_list':voys})
 
