@@ -14,7 +14,7 @@ from django.views.generic import DetailView,CreateView,UpdateView,DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
-from .forms import CutoffForm
+from .forms import CutoffForm,ReturnStartForm
 
 class VoyDetailView(DetailView):
 	model = Voy
@@ -323,3 +323,11 @@ def truckWindow(request):
 			terminal='B2',load_no=0).order_by('etb')
 
 	return render(request, 'truckwindow.html', {'object_list':voys})
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
+class ReturnStartUpdateView(PermissionRequiredMixin,UpdateView):
+	permission_required = 'berth.change_return_date'
+	model = Voy
+	template_name = 'berth/return_start_update.html'
+	form_class = ReturnStartForm
+	success_url = reverse_lazy('berth:truck-window')

@@ -4,14 +4,16 @@ from django.urls import path
 
 from . import views
 from .views import VoyDetailView,CutOffDetailView,CutOffUpdateView, \
-        CutOffCreateView,CutOffDeleteView,truckWindow
+        CutOffCreateView,CutOffDeleteView,truckWindow,ReturnStartUpdateView
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('voy/<slug>/', VoyDetailView.as_view(), name='voy-detail'),
+    
     path('cutoff/<pk>/delete/', CutOffDeleteView.as_view(), name='cutoff-delete'),
     path('cutoff/<pk>/', CutOffUpdateView.as_view(), name='cutoff-detail'),
     path('voy/<slug>/create/',CutOffCreateView.as_view(),name='cutoff-create'),
+    path('voy/<slug>/returndate/', ReturnStartUpdateView.as_view(), name='cutoff-return'),
+    path('voy/<slug>/', VoyDetailView.as_view(), name='voy-detail'),
     path('cutoff/',views.cutoff, name='cutoff-home'),
     path('export/',views.export, name='export'),
     path('etb/<vessel_code>/<voy>/',views.etb, name='etb'),

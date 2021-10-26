@@ -108,9 +108,11 @@
                 <!-- <td style="text-align: center;">{{obj.export_cutoff_date|date:"d/H:i"}}</td> -->
                 <td style="text-align: center;">
                   {% if obj.export_cutoff_date %}
-                    {{obj.export_cutoff_date|date:"d/H:i"}}
+                    
+                    <a href="{% url 'berth:cutoff-return' obj.slug  %}">{{obj.export_cutoff_date|date:"d/H:i"}}</a>
                   {% else %}
-                    {{ExportReturnDate|date:"d/H:i"}}
+                    
+                    <a href="{% url 'berth:cutoff-return' obj.slug  %}">{{ExportReturnDate|date:"d/H:i"}}</a>
                   {% endif %}
                 </td>
                 <td style="text-align: center;">{{ NewDryCutDate|date:"d/H:i"}} </td>

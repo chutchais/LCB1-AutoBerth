@@ -23,6 +23,8 @@
 		 ETD : {{ object.etd }}<br>
 		 DIS : {{ object.dis_no }}<br>
 		 LOAD : {{ object.load_no }}<br>
+		 Export Return Date : 
+		 	<a href="{% url 'berth:cutoff-return' object.slug  %}">{{ object.export_cutoff_date|default_if_none:"ยังไม่ได้กำหนด"}}</a><br>
 		 <hr/>
 		
 		  

@@ -19,3 +19,8 @@ class CutoffForm(ModelForm):
 	# 	user = kwargs.pop('user')
 	# 	super(FolderForm, self).__init__(*args, **kwargs)
 	# 	self.fields['parent'].queryset = Folder.objects.filter(user=user)
+
+class ReturnStartForm(ModelForm):
+	class Meta:
+		model = Voy
+		fields = ['export_cutoff_date']

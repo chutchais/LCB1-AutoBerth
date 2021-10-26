@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load system_tag %}
+
+{% block head %}
+{% endblock head %}
+
+{% block title %}
+    Berth Schedule Report
+{% endblock %}
+
+
+{% block form_content %}
+<div class="container">
+	<div class="row">
+		
+				<h3>Return Start Date of {{object}}
+					<small>
+						<a href="{% url 'berth:truck-window' %}">Truck Window</a>
+						
+					</small>
+				</h3>
+				<table class="table table-bordered">
+					<tr bgcolor="#FFFF00">
+		
+					 </tr>
+					 <tr>
+					 	<td>Return Start Date</td><td>{{ object.export_cutoff_date }}</td>
+					 </tr>
+					 
+				</table>
+	<hr/>
+	<h3>Make Change</h3>
+	{% include 'snippets/form_snippet.html' with form=form %}
+	</div>
+</div>
+{% endblock form_content %}

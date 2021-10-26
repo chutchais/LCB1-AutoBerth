@@ -120,6 +120,11 @@ class Voy(models.Model):
 	inverse = models.BooleanField(verbose_name ='Inverse 180',default=False)
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
 
+	class Meta:
+		permissions = [
+			('change_return_date', "Can change export start return date")
+			]
+
 	def __str__(self):
 		return ('%s of %s' % (self.voy,self.vessel))
 
@@ -319,13 +324,13 @@ def create_voy_slug(instance, new_slug=None):
 	slug = slugify(instance.voy + '-' + instance.code)
 	print (f'New voy {instance} ,slug is {slug}')
 	if new_slug is not None:
-	    slug = new_slug
+		slug = new_slug
 	qs = Voy.objects.filter(slug=slug).order_by("-id")
 	exists = qs.exists()
 	if exists:
-	    new_slug =slugify( "%s-%s-%s" %(instance.voy,instance.code,instance.id))
-	    print ('New slug %s' % new_slug)
-	    return create_voy_slug(instance, new_slug=new_slug)
+		new_slug =slugify( "%s-%s-%s" %(instance.voy,instance.code,instance.id))
+		print ('New slug %s' % new_slug)
+		return create_voy_slug(instance, new_slug=new_slug)
 	return slug
 
 
