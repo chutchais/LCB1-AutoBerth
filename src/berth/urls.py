@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.urls import path
 
 from . import views
-from .views import VoyDetailView,CutOffDetailView,CutOffUpdateView,CutOffCreateView,CutOffDeleteView
+from .views import VoyDetailView,CutOffDetailView,CutOffUpdateView, \
+        CutOffCreateView,CutOffDeleteView,truckWindow
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -16,6 +17,7 @@ urlpatterns = [
     path('etb/<vessel_code>/<voy>/',views.etb, name='etb'),
     # Added on April 26,2021
     path('etd/<vessel_code>/<voy>/',views.etd, name='etd'),
+    path('truckwindow/',views.truckWindow, name='truck-window'),
     # url(r'^$', views.index, name='index'),
     # url(r'voy/(?P<slug>[-\w]+)/$', VoyDetailView.as_view(), name='voy-detail'),
     # url(r'cutoff/(?P<pk>\d+)/delete/$', CutOffDeleteView.as_view(), name='cutoff-delete'),

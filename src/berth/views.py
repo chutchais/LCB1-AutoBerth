@@ -286,3 +286,40 @@ def cutoff(request):
 						'lastupdate':lastupdate})
 
 
+
+
+def truckWindow(request):
+	from django.db.models import Q
+	from django.db.models import Max
+	# from datetime import datetime
+	import datetime
+	from datetime import timedelta
+	# import datetimequit
+	year = request.GET.get('year', '')
+	workweek = request.GET.get('week', '')
+	import pytz
+	from datetime import datetime
+	tz = pytz.timezone('Asia/Bangkok')
+	today = datetime.now(tz=tz).replace(tzinfo=None) #remove aware timezone
+
+	if workweek=='' and year=='':
+		from_date = today -  timedelta(days=today.weekday())
+		to_date = from_date +  timedelta(days=8)
+		# Edit on Jan 9,2021 to Fix wrong Workweek
+		to_date = from_date +  timedelta(days=14)
+		year = to_date.strftime('%Y')#-%m-%d %H:%M
+		workweek = today.isocalendar()[1]
+		print ('Current from: %s to %s' % (from_date,to_date))
+	else:
+		d = foo(int(year),int(workweek))
+		from_date = d[0]
+		to_date = d[1]
+		print ('Week assign from: %s to %s' % (from_date,to_date))
+
+	voys = Voy.objects.filter(
+		Q(etb__range=[from_date,to_date]),
+		vessel__v_type='VESSEL',
+		draft=False).exclude(
+			terminal='B2',load_no=0).order_by('etb')
+
+	return render(request, 'truckwindow.html', {'object_list':voys})
