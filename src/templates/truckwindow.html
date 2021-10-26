@@ -70,21 +70,40 @@
     <table class="table table-bordered">
       <tr class="active">
         <th>ชื่อเรือ</th>
-        <th>เที่ยวเรือ</th>
-        <th>วันเวลาที่เรือเข้า</th>
-        <th>คืนตู้หนักตั้งแต่วันที่</th>
-        <th>ปิดรับคืนตู้หนัก(คัทออฟ)</th>
-        <th>ท่าเรือ</th>
+        <th style="text-align: center;">เที่ยวเรือ</th>
+        <th style="text-align: center;">วันเวลาที่เรือเข้า</th>
+        <th style="text-align: center;">คืนตู้หนักตั้งแต่วันที่</th>
+        <th style="text-align: center;">ปิดรับคืนตู้หนัก(คัทออฟ)</th>
+        <th style="text-align: center;">ท่าเรือ</th>
       </tr>
       
           {% for obj in object_list %}
+            {% is_fix_cutoff obj.service as IsCutOff %}
             <tr>
                 <td>{{obj.vessel}}</td>
-                <td>{{obj.voy}}</td>
-                <td>{{obj.etb|date:"d/H:i"}}</td>
-                <td>{{obj.export_cutoff_date|date:"d/H:i"}}</td>
-                <td></td>
-                <td>{{obj.terminal}}</td>
+                <td style="text-align: center;">{{obj.voy}}</td>
+                <td style="text-align: center;">{{obj.etb|date:"d/H:i"}}</td>
+                <td style="text-align: center;">{{obj.export_cutoff_date|date:"d/H:i"}}</td>
+                <td style="text-align: center;">
+                    {% if not obj.has_cutoff %}
+                        {% if IsCutOff %}
+                            {% get_fix_cutoff obj.service obj.etb  as NewDryCutDate %}
+                            {{ NewDryCutDate|date:"d/m H:i"}}
+                        {% else %}
+                            {% decrease_hour obj.etb 24 as NewDryCutDate %}
+                            {{ NewDryCutDate|date:"d/m H:i"}}
+                        {% endif %}
+                    {% else %}
+                        {% if obj.cutoff_set.first.dry_date %}
+                            {% decrease_hour obj.cutoff_set.first.dry_date 0 as NewDryCutDate %}
+                            {{ obj.cutoff_set.first.dry_date|date:"d/m H:i" }}
+                        {% else %}
+                            {% decrease_hour obj.etb 24 as NewDryCutDate %}
+                            {{ NewDryCutDate|date:"d/m H:i"}}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">{{obj.terminal|cut:"/1"}}</td>
             </tr>
           {% endfor %}
       
