@@ -32,7 +32,8 @@ def copy_new_voy(self, request, queryset):
         new_obj.etb = obj.etb + timedelta(days=7)
         new_obj.etd = obj.etd + timedelta(days=7)
         new_obj.imp_release_date = obj.imp_release_date + timedelta(days=7) if obj.imp_release_date != None else  obj.imp_release_date
-        new_obj.export_cutoff_date = obj.export_cutoff_date + timedelta(days=7) if obj.export_cutoff_date != None else  obj.export_cutoff_date
+        # Comment on Oct 26,2021
+        # new_obj.export_cutoff_date = obj.export_cutoff_date + timedelta(days=7) if obj.export_cutoff_date != None else  obj.export_cutoff_date
         new_obj.draft = True
         # Modify on Oct 23,2021 -- To fix original voy is missing after copy
         new_obj.slug = slugify(obj.voy + '-' + new_obj.code + '-' + new_obj.etb.strftime('%Y%m%d'))

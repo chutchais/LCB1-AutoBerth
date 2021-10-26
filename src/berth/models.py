@@ -164,8 +164,9 @@ class Voy(models.Model):
 		else:
 			self.imp_release_date = self.etd
 
-		if self.export_cutoff_date == None :
-			self.export_cutoff_date = self.etb - timedelta(hours=12)
+		# Comment on Oct 26,2021
+		# if self.export_cutoff_date == None :
+		# 	self.export_cutoff_date = self.etb - timedelta(hours=12)
 
 
 

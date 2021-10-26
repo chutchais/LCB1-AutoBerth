@@ -106,7 +106,13 @@
                 <td style="text-align: center;">{{obj.voy}}</td>
                 <td style="text-align: center;">{{obj.etb|date:"d/H:i"}}</td>
                 <!-- <td style="text-align: center;">{{obj.export_cutoff_date|date:"d/H:i"}}</td> -->
-                <td style="text-align: center;">{{ExportReturnDate|date:"d/H:i"}}</td>
+                <td style="text-align: center;">
+                  {% if obj.export_cutoff_date %}
+                    {{obj.export_cutoff_date|date:"d/H:i"}}
+                  {% else %}
+                    {{ExportReturnDate|date:"d/H:i"}}
+                  {% endif %}
+                </td>
                 <td style="text-align: center;">{{ NewDryCutDate|date:"d/H:i"}} </td>
                 <td style="text-align: center;">{{obj.terminal|cut:"/1"}}</td>
             </tr>
