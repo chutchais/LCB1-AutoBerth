@@ -81,29 +81,33 @@
           {% for obj in object_list %}
             {% is_fix_cutoff obj.service as IsCutOff %}
             <tr>
-                <td>{{obj.vessel}}</td>
-                <td style="text-align: center;">{{obj.voy}}</td>
-                <td style="text-align: center;">{{obj.etb|date:"d/H:i"}}</td>
-                <td style="text-align: center;">{{obj.export_cutoff_date|date:"d/H:i"}}</td>
-                <td style="text-align: center;">
-                    {% if not obj.has_cutoff %}
+                {% if not obj.has_cutoff %}
                         {% if IsCutOff %}
                             {% get_fix_cutoff obj.service obj.etb  as NewDryCutDate %}
-                            {{ NewDryCutDate|date:"d/m H:i"}}
+                            <!-- {{ NewDryCutDate|date:"d/m H:i"}} -->
                         {% else %}
                             {% decrease_hour obj.etb 24 as NewDryCutDate %}
-                            {{ NewDryCutDate|date:"d/m H:i"}}
+                            <!-- {{ NewDryCutDate|date:"d/m H:i"}} -->
                         {% endif %}
                     {% else %}
                         {% if obj.cutoff_set.first.dry_date %}
                             {% decrease_hour obj.cutoff_set.first.dry_date 0 as NewDryCutDate %}
-                            {{ obj.cutoff_set.first.dry_date|date:"d/m H:i" }}
+                            <!-- {{ obj.cutoff_set.first.dry_date|date:"d/m H:i" }} -->
                         {% else %}
                             {% decrease_hour obj.etb 24 as NewDryCutDate %}
-                            {{ NewDryCutDate|date:"d/m H:i"}}
+                            <!-- {{ NewDryCutDate|date:"d/m H:i"}} -->
                         {% endif %}
-                    {% endif %}
-                </td>
+                {% endif %}
+
+
+                {% decrease_hour NewDryCutDate 120 as ExportReturnDate %}
+
+                <td>{{obj.vessel}}</td>
+                <td style="text-align: center;">{{obj.voy}}</td>
+                <td style="text-align: center;">{{obj.etb|date:"d/H:i"}}</td>
+                <!-- <td style="text-align: center;">{{obj.export_cutoff_date|date:"d/H:i"}}</td> -->
+                <td style="text-align: center;">{{ExportReturnDate|date:"d/H:i"}}</td>
+                <td style="text-align: center;">{{ NewDryCutDate|date:"d/H:i"}} </td>
                 <td style="text-align: center;">{{obj.terminal|cut:"/1"}}</td>
             </tr>
           {% endfor %}
