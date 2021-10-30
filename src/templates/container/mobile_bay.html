@@ -38,15 +38,15 @@
 		<!-- Show Bay summary -->
 		{% if bays %}
 			<div class="col-sm-12 col-md-12">
-	                  {% for obj in bays %}
+	                  {% for obj in bays|dictsort:"bay" %}
 	                  	<a href="{% url 'container:detail' bayfile.slug obj.bay %}?view=mobile">
 	                  		{% if obj.ready %}       
-	                    		<button type="button" class="btn btn-lg btn-success">{{obj.bay}}</button>
+	                    		<button type="button" class="btn btn-lg btn-success mr-2 mb-2">{{obj.bay}}</button>
 	                    	{% else %}
 	                    		{% if obj.move == 0 %} 
-	                    			<button type="button" class="btn btn-lg btn-secondary">{{obj.bay}}</button>
+	                    			<button type="button" class="btn btn-lg btn-secondary mr-2 mb-2">{{obj.bay}}</button>
 	                    		{% else %}
-	                    			<button type="button" class="btn btn-lg btn-warning">{{obj.bay}}</button>
+	                    			<button type="button" class="btn btn-lg btn-warning mr-2 mb-2">{{obj.bay}}</button>
 	                    		{% endif %}
 	                    	{% endif %}
 	                	</a>
