@@ -72,6 +72,8 @@ class Vessel(models.Model):
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
 	# user = models.ForeignKey('auth.User',blank=True,null=True)
 	user = models.ForeignKey('auth.User',blank=True,null=True,on_delete=models.SET_NULL)
+	# Added on Dec 7,2021
+	callsign = models.CharField(blank=True, max_length=20, null=True, verbose_name='Call sign')
 	
 	def __str__(self):
 		return self.name
@@ -119,6 +121,9 @@ class Voy(models.Model):
 	export_cutoff_date = models.DateTimeField(verbose_name ='Export Return Start Date',blank=True, null=True)
 	inverse = models.BooleanField(verbose_name ='Inverse 180',default=False)
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
+	# Added on Dec 7,2021
+	dis_fross_weight = models.FloatField(default=0, verbose_name='Discharge gross weight')
+	load_gross_weight = models.FloatField(default=0, verbose_name='Discharge gross weight')
 
 	class Meta:
 		permissions = [

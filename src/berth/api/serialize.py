@@ -26,6 +26,8 @@ class VoySerializer(ModelSerializer):
 	startCol = SerializerMethodField()
 	stopCol = SerializerMethodField()
 	move_performa = SerializerMethodField()
+	callsign = SerializerMethodField()
+	imo = SerializerMethodField()
 	class Meta:
 		model = Voy
 		# fields ='__all__'
@@ -34,7 +36,8 @@ class VoySerializer(ModelSerializer):
 				'lov','dis_no','load_no','est_teu',
 				'terminal','start_pos','vessel_type','color','remark',
 				'vsl_oper','arrival_draft','departure_draft','slug','draft',
-				'startCol','stopCol','move_performa','move_confirm','text_pos','qc','inverse']
+				'startCol','stopCol','move_performa','move_confirm','text_pos','qc','inverse',
+				'dis_fross_weight','load_gross_weight','callsign','imo']
 
 	def get_lov(self,obj):
 		# content_type = obj.get_content_type
@@ -60,6 +63,12 @@ class VoySerializer(ModelSerializer):
 
 	def get_move_performa(self,obj):
 		return obj.service.move_performa
+	
+	def get_callsign(self,obj):
+		return obj.vessel.callsign
+
+	def get_imo(self,obj):
+		return obj.vessel.imo
 
 
 class VoyDetailSerializer(ModelSerializer):
@@ -69,6 +78,9 @@ class VoyDetailSerializer(ModelSerializer):
 	slug = SerializerMethodField()
 	startCol = SerializerMethodField()
 	stopCol = SerializerMethodField()
+	callsign = SerializerMethodField()
+	imo = SerializerMethodField()
+
 	class Meta:
 		model = Voy
 		# fields ='__all__'
@@ -77,7 +89,8 @@ class VoyDetailSerializer(ModelSerializer):
 				'lov','dis_no','load_no','est_teu',
 				'terminal','start_pos','vessel_type','color','remark',
 				'vsl_oper','arrival_draft','departure_draft','slug','draft',
-				'startCol','stopCol']
+				'startCol','stopCol',
+				'dis_fross_weight','load_gross_weight','callsign','imo']
 
 	def get_lov(self,obj):
 		return obj.vessel.lov
@@ -97,6 +110,11 @@ class VoyDetailSerializer(ModelSerializer):
 	def get_stopCol(self,obj):
 		return obj.terminal.stop_range
 
+	def get_callsign(self,obj):
+		return obj.vessel.callsign
+
+	def get_imo(self,obj):
+		return obj.vessel.imo
 
 # Added on Oct 19,2021
 class TruckWindowSerializer(ModelSerializer):

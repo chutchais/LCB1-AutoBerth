@@ -278,6 +278,7 @@ class VoyAdmin(admin.ModelAdmin):
         ('Container Information',{'fields': [('dis_no','load_no'),'est_teu','qc']}),
         ('Estimate Time',{'fields': [('eta','etb','etd')]}),
         ('Import/Export Control',{'fields': [('export_cutoff_date')]}),
+        ('Gross Weight',{'fields': ['dis_fross_weight','load_gross_weight']}),
         ('Save as Draft',{'fields': [('draft'),'text_pos']}),
         # ('Bay Plan',{'fields': [('bayplanfile__filename'),'bayplanfile__uploaded']}),
     ]
@@ -332,14 +333,14 @@ admin.site.register(Terminal,TerminalAdmin)
 class VesselAdmin(admin.ModelAdmin):
     search_fields = ['name','imo','description']
     list_filter = ['v_type']
-    list_display = ('name','description','lov','imo','v_type','status')
+    list_display = ('name','description','lov','imo','callsign','v_type','status')
     # list_editable = ('color',)
     # save_as = True
     save_as_continue = True
     save_on_top =True
     list_select_related = True
     fieldsets = [
-        ('Basic Information',{'fields': ['name','description','lov','imo','v_type','status']}),
+        ('Basic Information',{'fields': ['name','description','lov','imo','callsign','v_type','status']}),
     ]
 admin.site.register(Vessel,VesselAdmin)
 
