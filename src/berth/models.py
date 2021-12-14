@@ -123,7 +123,7 @@ class Voy(models.Model):
 	modified_date = models.DateTimeField(blank=True, null=True,auto_now=True)
 	# Added on Dec 7,2021
 	dis_fross_weight = models.FloatField(default=0, verbose_name='Discharge gross weight')
-	load_gross_weight = models.FloatField(default=0, verbose_name='Discharge gross weight')
+	load_gross_weight = models.FloatField(default=0, verbose_name='Load gross weight')
 
 	class Meta:
 		permissions = [
